@@ -1,0 +1,1 @@
+export type formaPagamento = "Dinheiro" | "Boleto" | "Pix";
