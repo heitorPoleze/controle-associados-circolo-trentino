@@ -1,8 +1,10 @@
 import { Associado } from "./Associado";
 import { sexo } from "../../../controller/types/sexo";
 import { Endereco } from "../Endereco";
+import { Telefone } from "../Telefone";
 export class Pagante extends Associado{
-    constructor(nome: string, cpf: string ,dataNascimento: string, sexo: sexo, endereco: Endereco, telefone: number, email: string) {
-        super(nome, cpf, dataNascimento, sexo, endereco, telefone, email);
+    constructor(nome: string,  dataNascimento: string, sexo: sexo, endereco: Endereco, telefone: Telefone, email: string, cpf: string, familia: string, localOrigem: string, uuid?: string, dataAssociacao?: Date)
+    {
+        super(nome, dataNascimento, sexo, endereco, telefone, email, cpf, familia, localOrigem, uuid, dataAssociacao);
     }
 }

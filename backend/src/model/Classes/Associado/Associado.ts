@@ -1,24 +1,27 @@
 import { Endereco } from "../Endereco";
 import { sexo } from "../../../controller/types/sexo";
+import {v4 as uuidv4} from 'uuid';
+import { Telefone } from "../Telefone";
+
 type condicao = "Ativo" | "Inativo" | "Cancelado";
 export class Associado {
-    private _dataAssociacao: string;
-    private _idAssociado: number;
+    private _uuid: string;
     private _nome: string;
-    private _cpf: string;
+    private _familia: string;
+    private _localOrigem: string;
     private _dataNascimento: string;
     private _sexo: sexo;
     private _endereco: Endereco;
-    private _telefone: number;
+    private _telefone: Telefone;
     private _email: string;
+    private _dataAssociacao: Date;
+    private _cpf: string;
     private _condicao: condicao;
-    private static _qtdAssociado: number = 0;
-    constructor(nome: string, cpf: string ,dataNascimento: string, sexo: sexo, endereco: Endereco, telefone: number, email: string) {
-        const data = new Date();
-        const mes = String(data.getMonth() + 1).padStart(2, "0");
-        const dia = String(data.getDate()).padStart(2, "0");
-        this._dataAssociacao = `${data.getFullYear()}-${mes}-${dia}`;
-        this._idAssociado = Associado._qtdAssociado++;
+    constructor(nome: string,  dataNascimento: string, sexo: sexo, endereco: Endereco, telefone: Telefone, email: string, cpf: string, familia: string = "", localOrigem: string = "", uuid?: string, dataAssociacao?: Date) {
+        this._uuid = uuid ?? uuidv4();
+        this._dataAssociacao = dataAssociacao ?? new Date(); //data de associação pode ser implementada no banco de dados ao invés do construtor
+        this._familia = familia;
+        this._localOrigem = localOrigem;
         this._nome = nome;
         this._cpf = cpf;
         this._dataNascimento = dataNascimento;
@@ -29,12 +32,19 @@ export class Associado {
         this._condicao = "Ativo";
     }
 
-    get dataAssociacao(): string {
+    get dataAssociacaoComDetalhes(): Date {
         return this._dataAssociacao;
     }
 
-    get idAssociado(): number {
-        return this._idAssociado;
+    get dataAssociacao(): string {
+        const date = this._dataAssociacao;
+        const mes = String(date.getMonth() + 1).padStart(2, "0");
+        const dia = String(date.getDate()).padStart(2, "0");
+        return `${date.getFullYear()}-${mes}-${dia}`;
+    }
+
+    get uuid(): string {
+        return this._uuid;
     }
 
     get nome(): string {
@@ -72,10 +82,10 @@ export class Associado {
         this._endereco = value;
     }
 
-    get telefone(): number {
+    get telefone(): Telefone {
         return this._telefone;
     }
-    set telefone(value: number) {
+    set telefone(value: Telefone) {
         this._telefone = value;
     }
 
