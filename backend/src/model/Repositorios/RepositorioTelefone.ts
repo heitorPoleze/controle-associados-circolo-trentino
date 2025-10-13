@@ -5,8 +5,8 @@ import { Pool } from 'mysql2/promise';
 
 interface TelefoneRow extends RowDataPacket {
     uuidTelefone: string;
-    ddd: number;
-    numero: number;
+    ddd: string;
+    numero: string;
 }
 export class RepostorioTelefone implements IPesquisavel<Telefone> {
     private _conexao: Pool

@@ -4,7 +4,7 @@ export const conexao = mysql.createPool({
         host: 'localhost',
         user: 'root',
         password: '',
-        database: '', //TODO colocar nome database
+        database: 'circolo_trentino',
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0

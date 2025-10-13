@@ -1,3 +1,4 @@
+/*
 import { Admin } from "./Admin";
 import { Associado } from "./Associado/Associado";
 
@@ -44,3 +45,4 @@ export class Anotacao {
     }
     
 }
+*/

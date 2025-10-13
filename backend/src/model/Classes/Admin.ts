@@ -1,3 +1,4 @@
+/*
 import { formaPagamento } from "../../controller/types/formaPagamento";
 import { sexo } from "../../controller/types/sexo";
 import { Anotacao } from "./Anotacao";
@@ -49,3 +50,5 @@ export class Admin {
         return new Anotacao(descricao, associado, admin);
     }
 }
+
+*/

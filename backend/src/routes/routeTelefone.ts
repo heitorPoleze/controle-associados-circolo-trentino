@@ -32,3 +32,5 @@ router.get("/telefones", (req, res) => {
         }
     }
 });
+
+export default router;
