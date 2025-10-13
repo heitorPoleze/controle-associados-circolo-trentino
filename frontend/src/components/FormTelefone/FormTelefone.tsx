@@ -5,22 +5,21 @@ import { criarTelefone } from "../../services/telefoneServices";
 function FormTelefone() {
   const [ddd, setDdd] = useState('');
   const [numero, setNumero] = useState('');
-
+  const [erro, setErro] = useState<string | null>(null); 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
- 
-    event.preventDefault();
+    event.preventDefault(); // testar o envio do formulario sem essa linha
 
-    const formData = { ddd, numero };
+    setErro(null);
+    const formData = { ddd: ddd, numero: numero };
     
     try {
         await criarTelefone(formData);
         alert('Telefone criado com sucesso!');
+        setDdd('');
+        setNumero('');
     }catch (error) {
-        if (error instanceof Error) throw new Error(error.message);
+        if (error instanceof Error) setErro(error.message); 
     }
-    
-    setDdd('');
-    setNumero('');
   };
 
     return (
@@ -40,13 +39,14 @@ function FormTelefone() {
       <div>
         <label htmlFor="numero">Número:</label>
         <input
-          type="number"
+          type="text"
           id="numero"
           name="numero"
           value={numero}
           onChange={(e) => setNumero(e.target.value)}
         />
       </div>
+      {erro && <p className="erro">{erro}</p>}
       <button type="submit">Enviar</button>
     </form>
   );

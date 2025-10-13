@@ -15,12 +15,11 @@ export async function criarTelefone(telefoneData: TelefoneData) {
             },
             body: JSON.stringify(telefoneData)
         });
-
-        if (!resposta.ok) {
-            throw new Error('Erro ao criar telefone');
-        }
-
+        
         const telefone = await resposta.json();
+        if (!resposta.ok) {
+            throw new Error(telefone.mensagem);
+        }
         return telefone;
     } catch (error) {
         if (error instanceof Error) throw new Error(error.message);

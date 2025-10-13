@@ -12,40 +12,55 @@ export class RepostorioTelefone implements IPesquisavel<Telefone> {
     private _conexao: Pool
     constructor(conexao: Pool) {
         this._conexao = conexao
-     }
+    }
     async criarTelefone(telefone: Telefone): Promise<Telefone> {
         const sql = 'INSERT INTO telefones (uuidTelefone, ddd, numero) VALUES (?, ?, ?)';
 
-        const [result] = await this._conexao.query<ResultSetHeader>(sql, [telefone.uuid, telefone.ddd, telefone.numero]);
+        try {
+            const [result] = await this._conexao.query<ResultSetHeader>(sql, [telefone.uuid, telefone.ddd, telefone.numero]);
 
-        if(result.affectedRows === 0) {
-            throw new Error('Erro ao criar telefone no banco de dados');
+            if (result.affectedRows === 0) {
+                throw new Error('Erro ao criar telefone no banco de dados');
+            }
+
+            return telefone;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao criar telefone: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao criar o telefone.');
         }
 
-        return telefone;
+
     }
 
-    async buscarTodosOsTelefones(): Promise<Telefone[]>{
+    async buscarTodosOsTelefones(): Promise<Telefone[]> { // pq caraios quando eu tiro o throw new error do if do catch, o codigo sequer compila
         const sql = 'SELECT * FROM telefones';
-        const [result] = await this._conexao.query<TelefoneRow[]>(sql);
-        const telefones = result.map((telefone) => new Telefone(telefone.ddd, telefone.numero, telefone.uuidTelefone));
-        //dar console.log(telefones) para entender como é retornado (para saber se coloco .json nas rotas ou não)
-        return telefones;
+        try {
+            const [result] = await this._conexao.query<TelefoneRow[]>(sql);
+            const telefones = result.map((telefone) => new Telefone(telefone.ddd, telefone.numero, telefone.uuidTelefone));
+            return telefones;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar todos os telefones: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar os telefones.');
+        }
     }
 
     async buscarTodosOsAtributosPorId(id: string): Promise<Telefone | null> {
         const sql = 'SELECT * FROM telefones WHERE idTelefone = ?';
         const [result] = await this._conexao.query<TelefoneRow[]>(sql, [id]);
 
-        const [telefoneEncontrado] = result; 
+        const [telefoneEncontrado] = result;
 
         if (!telefoneEncontrado) {
             return null;
         }
 
         return new Telefone(
-            telefoneEncontrado.ddd, 
-            telefoneEncontrado.numero, 
+            telefoneEncontrado.ddd,
+            telefoneEncontrado.numero,
             telefoneEncontrado.uuidTelefone);
     }
 
