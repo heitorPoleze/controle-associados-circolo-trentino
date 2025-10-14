@@ -1,0 +1,1 @@
+export type condicao = "Ativo" | "Inativo" | "Cancelado";

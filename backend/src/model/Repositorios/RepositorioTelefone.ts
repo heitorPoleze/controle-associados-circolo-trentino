@@ -7,7 +7,7 @@ interface TelefoneRow extends RowDataPacket {
     ddd: string;
     numero: string;
 }
-export class RepostorioTelefone extends Repositorio<Telefone> {
+export class RepositorioTelefone extends Repositorio<Telefone> {
     constructor(conexao: Pool) {
         super(conexao, 'telefones', 'uuidTelefone');
     }

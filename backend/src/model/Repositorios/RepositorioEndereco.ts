@@ -33,8 +33,8 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
         const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, logradouro, bairro, cidade, uf, cep, pais) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
         try{
-            const [rows] = await this.conexao.query<ResultSetHeader>(sql, [endereco.uuid, endereco.logradouro, endereco.bairro, endereco.cidade, endereco.uf, endereco.cep, endereco.pais]);
-            if (rows.affectedRows === 0) {
+            const [row] = await this.conexao.query<ResultSetHeader>(sql, [endereco.uuid, endereco.logradouro, endereco.bairro, endereco.cidade, endereco.uf, endereco.cep, endereco.pais]);
+            if (row.affectedRows === 0) {
                 throw new Error('Nenhum endereço criado. Falha no banco de dados');
             }
             return endereco;

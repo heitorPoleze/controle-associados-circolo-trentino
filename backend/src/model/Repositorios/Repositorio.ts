@@ -22,7 +22,7 @@ export abstract class Repositorio<Classe> implements IPesquisavel<Classe> {
             const [result] = rows;
 
             if (!result){
-                return null
+                return null;
             }
              return this.toDomain(result);
         }

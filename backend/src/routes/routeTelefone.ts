@@ -1,17 +1,17 @@
 import { Router } from "express";
 import { conexao } from "../config/sql";
 import { Telefone } from "../model/Classes/Telefone";
-import { RepostorioTelefone } from "../model/Repositorios/RepositorioTelefone";
+import { RepositorioTelefone as RepositorioTelefone } from "../model/Repositorios/RepositorioTelefone";
 
 const router = Router();
-const repostorioTelefone = new RepostorioTelefone(conexao);
+const repositorioTelefone = new RepositorioTelefone(conexao);
 
 router.post("/telefones", async (req, res) => {
     try {
         const { ddd, numero } = req.body;
         const telefone = new Telefone(ddd, numero);
 
-        const telefoneCriado = await repostorioTelefone.criar(telefone);
+        const telefoneCriado = await repositorioTelefone.criar(telefone);
         
         res.status(201).json(telefoneCriado);
     } catch (error) {
@@ -24,7 +24,7 @@ router.post("/telefones", async (req, res) => {
 
 router.get("/telefones", async (req, res) => {
     try{
-        const telefones = await repostorioTelefone.buscarTodos();
+        const telefones = await repositorioTelefone.buscarTodos();
         res.status(200).json(telefones);
     } catch (error) {
         if (error instanceof Error) {
