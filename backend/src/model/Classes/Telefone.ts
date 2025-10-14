@@ -8,7 +8,7 @@ export class Telefone {
         this.isNumero(ddd, numero);
         this.verificaLengthDdd(ddd);
         this.verificaLengthNumero(numero);
-        
+
         this._uuid = uuid ?? uuidv4();
         this._ddd = ddd.padStart(3, "0");
         this._numero = numero;
@@ -26,7 +26,7 @@ export class Telefone {
         }
     }
 
-    isNumero(...atributos: string[]){
+    isNumero(...atributos: string[]): void{
         atributos.forEach((atributo) => {
         if(isNaN(Number(atributo)))
         throw new Error(atributo + " não é um número")
@@ -40,8 +40,20 @@ export class Telefone {
         return this._ddd;
     }
 
+    set ddd(value: string) {
+        this.isNumero(value);
+        this.verificaLengthDdd(value);
+        this._ddd = value;
+    }
+
     get numero(): string {
         return this._numero;
+    }
+
+    set numero(value: string) {
+        this.isNumero(value);
+        this.verificaLengthNumero(value);
+        this._numero = value;
     }
 
     get numeroFormatado(): string {
@@ -60,7 +72,7 @@ export class Telefone {
         return `${numTelefone5PrimeirosDigitos}-${numTelefoneRestante}`;
     }
 
-    get numeroCompleto(): string {
+    get telefoneFormatado(): string {
         return `(${this.ddd}) ${this.numeroFormatado}`;
     }
 }

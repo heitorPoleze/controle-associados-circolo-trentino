@@ -24,7 +24,7 @@ function FormTelefone() {
 
     return (
     <form onSubmit={handleSubmit}>
-      <h2>Formulário de Cadastro</h2>
+      <h2>Formulário de Cadastro de Telefone</h2>
       <div>
         <label htmlFor="ddd">DDD:</label>
         <input

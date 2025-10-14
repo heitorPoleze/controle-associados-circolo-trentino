@@ -102,4 +102,18 @@ export class Associado {
     set condicao(value: condicao) {
         this._condicao = value;
     }
+
+    get familia(): string {
+        return this._familia;
+    }
+    set familia(value: string) {
+        this._familia = value;
+    }
+
+    get localOrigem(): string {
+        return this._localOrigem;
+    }
+    set localOrigem(value: string) {
+        this._localOrigem = value;
+    }
 }

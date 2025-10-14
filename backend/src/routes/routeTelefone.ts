@@ -11,7 +11,7 @@ router.post("/telefones", async (req, res) => {
         const { ddd, numero } = req.body;
         const telefone = new Telefone(ddd, numero);
 
-        const telefoneCriado = await repostorioTelefone.criarTelefone(telefone);
+        const telefoneCriado = await repostorioTelefone.criar(telefone);
         
         res.status(201).json(telefoneCriado);
     } catch (error) {
@@ -24,11 +24,11 @@ router.post("/telefones", async (req, res) => {
 
 router.get("/telefones", async (req, res) => {
     try{
-        const telefones = await repostorioTelefone.buscarTodosOsTelefones();
+        const telefones = await repostorioTelefone.buscarTodos();
         res.status(200).json(telefones);
     } catch (error) {
         if (error instanceof Error) {
-        res.status(500).json({ mensagem: error.message, heitor: "falhou" });
+        res.status(500).json({ mensagem: error.message });
         }
     }
 });
