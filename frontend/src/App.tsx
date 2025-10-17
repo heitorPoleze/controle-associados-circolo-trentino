@@ -1,7 +1,6 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import FormTelefone from './components/FormTelefone/FormTelefone';
-import FormEndereco from './components/FormEndereco';
+import FormCadastroAssociado from './components/FormCadastroAssociado/FormCadastroAssociado';
 
 function App() {
 
@@ -9,8 +8,8 @@ function App() {
     <>
     <BrowserRouter>
       <Routes>
-        <Route path='/telefones' element={<FormTelefone />} />
-        <Route path='/enderecos' element={<FormEndereco />} />
+        <Route path='/' element={<FormCadastroAssociado />} />
+        <Route path='/cadastrar/associado' element={<FormCadastroAssociado />} />
       </Routes>
     </BrowserRouter>
     </>
