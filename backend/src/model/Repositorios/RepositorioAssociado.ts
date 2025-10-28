@@ -13,8 +13,6 @@ interface AssociadoRow extends RowDataPacket{
     localOrigem: string;
     dataNascimento: string;
     sexo: sexo;
-    uuidEndereco: string;
-    uuidTelefone: string;
     email: string;
     dataAssociacao?: Date;
     cpf: string;
@@ -22,20 +20,14 @@ interface AssociadoRow extends RowDataPacket{
 }   
 
 export class RepositorioAssociado extends Repositorio<Associado>{
-    private _telefone: Telefone;
-    private _endereco: Endereco;
-    constructor(conexao: Pool, telefone: Telefone, endereco: Endereco) {
-        super(conexao, 'associados', 'uuidAssociado');
-        this._telefone = telefone;
-        this._endereco = endereco;
+    constructor(conexao: Pool) {
+        super(conexao, 'associados', 'uuid');
     }
     toDomain(row: AssociadoRow): Associado {
         return new Associado(
             row.nome,
             row.dataNascimento,
             row.sexo,
-            this._endereco, 
-            this._telefone,
             row.email,
             row.cpf,
             row.familia,
@@ -47,10 +39,10 @@ export class RepositorioAssociado extends Repositorio<Associado>{
     }
 
     async criar(associado: Associado): Promise<Associado> {
-        const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, nome, familia, localOrigem, dataNascimento, sexo, uuidEndereco, uuidTelefone, email, dataAssociacao, cpf, condicao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, nome, familia, localOrigem, dataNascimento, sexo, email, cpf, condicao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         
         try{
-            const [row] = await this.conexao.query<ResultSetHeader>(sql, [associado.nome, associado.familia, associado.localOrigem, associado.dataNascimento, associado.sexo, associado.endereco.uuid, associado.telefone.uuid, associado.email, associado.dataAssociacao, associado.cpf, associado.condicao]);
+            const [row] = await this.conexao.query<ResultSetHeader>(sql, [associado.uuid,associado.nome, associado.familia, associado.localOrigem, associado.dataNascimento, associado.sexo, associado.email, associado.cpf, associado.condicao]);
             if(row.affectedRows === 0) {
                 throw new Error('Nenhum associado criado. Falha no banco de dados.');
             }
@@ -63,17 +55,4 @@ export class RepositorioAssociado extends Repositorio<Associado>{
         }
     }
 
-    get telefone(): Telefone {
-        return this._telefone;
-    }
-    set telefone(value: Telefone) {
-        this._telefone = value;
-    }
-
-    get endereco(): Endereco {
-        return this._endereco;
-    }
-    set endereco(value: Endereco) {
-        this._endereco = value;
-    }
 }

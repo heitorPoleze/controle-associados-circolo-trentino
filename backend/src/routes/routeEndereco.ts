@@ -1,11 +1,12 @@
+
 import { Router } from "express";
-import { RepositorioEndereco } from "../model/Repositorios/RepositorioEndereco";
+//import { RepositorioEndereco } from "../model/Repositorios/RepositorioEndereco";
 import { conexao } from "../config/sql";
 import { Endereco } from "../model/Classes/Endereco";
 
 const router = Router();
-const repositorioEndereco = new RepositorioEndereco(conexao);
-
+//const repositorioEndereco = new RepositorioEndereco(conexao);
+/*
 router.post("/enderecos", async (req, res) => {
     try{
         const { logradouro, bairro, cidade, uf, cep, pais } = req.body;
@@ -46,5 +47,5 @@ router.get("/enderecos/:id", async (req, res) => {
         }
     }
 })
-
+*/
 export default router;

@@ -12,13 +12,11 @@ export class Associado {
     private _localOrigem: string;
     private _dataNascimento: string;
     private _sexo: sexo;
-    private _endereco: Endereco;
-    private _telefone: Telefone;
     private _email: string;
     private _dataAssociacao: Date | undefined;
     private _cpf: string;
     private _condicao: condicao;
-    constructor(nome: string,  dataNascimento: string, sexo: sexo, endereco: Endereco, telefone: Telefone, email: string, cpf: string, familia: string = "", localOrigem: string = "",condicao: condicao = "Ativo", uuid?: string, dataAssociacao?: Date) {
+    constructor(nome: string,  dataNascimento: string, sexo: sexo, email: string, cpf: string, familia: string = "", localOrigem: string = "",condicao: condicao = "Ativo", uuid?: string, dataAssociacao?: Date) {
         this._uuid = uuid ?? uuidv4();
         this._dataAssociacao = dataAssociacao;
         
@@ -37,8 +35,6 @@ export class Associado {
         this._cpf = cpf;
         this._dataNascimento = dataNascimento;
         this._sexo = sexo;
-        this._endereco = endereco;
-        this._telefone = telefone;
         this._email = email;
         this._condicao = condicao;
     }
@@ -81,20 +77,6 @@ export class Associado {
     set sexo(sexo: sexo) {
         if(sexo.length !== 1) throw new Error("Sexo inválido. O sexo deve ser M ou F.");
         this._sexo = sexo;
-    }
-
-    get endereco(): Endereco {
-        return this._endereco;
-    }
-    set endereco(value: Endereco) {
-        this._endereco = value;
-    }
-
-    get telefone(): Telefone {
-        return this._telefone;
-    }
-    set telefone(value: Telefone) {
-        this._telefone = value;
     }
 
     get email(): string {

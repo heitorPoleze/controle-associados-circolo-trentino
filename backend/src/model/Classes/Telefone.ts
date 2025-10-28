@@ -1,10 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
+import { Associado } from "./Associado/Associado";
 export class Telefone {
     private _uuid: string;
     private _ddd: string;
     private _numero: string;
+    private _associado: Associado
 
-    constructor(ddd: string, numero: string, uuid?: string) {
+    constructor(ddd: string, numero: string, associado: Associado ,uuid?: string) {
         this.isNumero(ddd, numero);
         this.verificaLengthDdd(ddd);
         this.verificaLengthNumero(numero);
@@ -12,6 +14,7 @@ export class Telefone {
         this._uuid = uuid ?? uuidv4();
         this._ddd = ddd.padStart(3, "0");
         this._numero = numero;
+        this._associado = associado;
     }
 
     verificaLengthDdd(ddd: string): void {
@@ -56,6 +59,13 @@ export class Telefone {
         this._numero = value;
     }
 
+    get associado(): Associado {
+        return this._associado;
+    }
+
+    set associado(value: Associado) {
+        this._associado = value;
+    }
     get numeroFormatado(): string {
         if(this._numero.length === 8) {
         const numTelefone4PrimeirosDigitos = this._numero.slice(0, 4);

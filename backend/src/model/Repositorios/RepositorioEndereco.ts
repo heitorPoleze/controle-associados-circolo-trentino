@@ -9,8 +9,9 @@ interface EnderecoRow extends RowDataPacket {
     uf: string;
     cep: string;
     pais: string;
+    uuidAssociado: string
 }
-
+/*
 export class RepositorioEndereco extends Repositorio<Endereco> {
 
     constructor(conexao: Pool) {
@@ -25,9 +26,10 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
             row.uf,
             row.cep,
             row.pais,
-            row.uuid
+            //this.buscarTodosOsAtributosPorId(row.uuidAssociado)
         )
     }
+
 
     async criar(endereco: Endereco): Promise<Endereco> {
         const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, logradouro, bairro, cidade, uf, cep, pais) VALUES (?, ?, ?, ?, ?, ?, ?)`;
@@ -47,3 +49,4 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
     }
    
 }
+*/

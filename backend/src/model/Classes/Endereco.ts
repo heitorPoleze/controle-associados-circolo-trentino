@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { Associado } from "./Associado/Associado";
 
 export class Endereco {
     private _uuid: string
@@ -8,8 +9,9 @@ export class Endereco {
     private _uf: string;
     private _cep: string;
     private _pais: string;
+    private _associado: Associado;
 
-    constructor(logradouro: string, bairro: string, cidade: string, uf: string, cep: string, pais: string = "Brasil", uuid?:string) {
+    constructor(logradouro: string, bairro: string, cidade: string, uf: string, cep: string, pais: string = "Brasil", associado: Associado, uuid?:string) {
         if (logradouro.length > 255 || logradouro.length === 0)throw new Error("Logradouro inválido. O logradouro deve ter entre 1 e 255 caracteres.");
         if(bairro.length > 100 || bairro.length === 0)throw new Error("Bairro inválido. O bairro deve ter entre 1 e 100 caracteres.");
         if(cidade.length > 100 || cidade.length === 0)throw new Error("Cidade inválido. A cidade deve ter entre 1 e 100 caracteres.");
@@ -24,6 +26,7 @@ export class Endereco {
         this._uf = uf.toUpperCase();
         this._cep = cep;
         this._pais = pais;
+        this._associado = associado;
     }
 
     get logradouro(): string {
@@ -67,7 +70,6 @@ export class Endereco {
         this._cep = cep;
     }
 
-
     get pais(): string {
         return this._pais;
     }
@@ -76,6 +78,13 @@ export class Endereco {
         this._pais = pais;
     }
 
+    get associado(): Associado {
+        return this._associado;
+    }
+
+    set associado(associado: Associado) {
+        this._associado = associado;
+    }
     get uuid(): string {
         return this._uuid;
     }

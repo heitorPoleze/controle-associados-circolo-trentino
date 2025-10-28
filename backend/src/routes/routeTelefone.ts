@@ -1,11 +1,12 @@
+
 import { Router } from "express";
 import { conexao } from "../config/sql";
 import { Telefone } from "../model/Classes/Telefone";
-import { RepositorioTelefone as RepositorioTelefone } from "../model/Repositorios/RepositorioTelefone";
+//import { RepositorioTelefone as RepositorioTelefone } from "../model/Repositorios/RepositorioTelefone";
 
 const router = Router();
-const repositorioTelefone = new RepositorioTelefone(conexao);
-
+//const repositorioTelefone = new RepositorioTelefone(conexao);
+/*
 router.post("/telefones", async (req, res) => {
     try {
         const { ddd, numero } = req.body;
@@ -32,5 +33,5 @@ router.get("/telefones", async (req, res) => {
         }
     }
 });
-
+*/
 export default router;
