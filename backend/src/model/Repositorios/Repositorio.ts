@@ -1,4 +1,4 @@
-import { Pool, RowDataPacket } from "mysql2/promise";
+import { Pool, PoolConnection, RowDataPacket } from "mysql2/promise";
 import { IPesquisavel } from "../Interfaces/IPesquisavel";
 
 export abstract class Repositorio<Classe> implements IPesquisavel<Classe> {
@@ -11,10 +11,10 @@ export abstract class Repositorio<Classe> implements IPesquisavel<Classe> {
         this._colunaUuid = colunaUuid
     }
     
-    abstract toDomain(row: RowDataPacket): Classe;
-    abstract criar(objeto: Classe): Promise<Classe>;
+    abstract toDomain(row: RowDataPacket): Classe | Promise<Classe | null>;
+    abstract criar(objeto: Classe, poolConection: PoolConnection ): Promise<Classe>;
     async buscarTodosOsAtributosPorId(id: string): Promise<Classe | null>{
-        const sql = `SELECT * FROM ${this._tabela} WHERE ${this._colunaUuid} = ?;`;
+        const sql = `SELECT * FROM ${this.tabela} WHERE ${this.colunaUuid} = ?;`;
         
         try{
             const [rows] = await this.conexao.query<RowDataPacket[]>(sql, [id]);
@@ -28,22 +28,28 @@ export abstract class Repositorio<Classe> implements IPesquisavel<Classe> {
         }
         catch (error){
             if (error instanceof Error){
-                throw new Error(`Erro ao buscar ${this._tabela} por ID: ${error.message}`);
+                throw new Error(`Erro ao buscar ${this.tabela} por ID: ${error.message}`);
             }
-            throw new Error(`Ocorreu um erro desconhecido ao buscar ${this._tabela} por ID.`);
+            throw new Error(`Ocorreu um erro desconhecido ao buscar ${this.tabela} por ID.`);
         }
     }
     async buscarTodos(): Promise<Classe[]>{
-        const sql = `SELECT * FROM ${this._tabela};`;
+        const sql = `SELECT * FROM ${this.tabela};`;
         try{
             const [rows] = await this.conexao.query<RowDataPacket[]>(sql);
+
             const result = rows.map((row) => this.toDomain(row));
-            return result;
+
+            const promiseResult = await Promise.all(result);
+
+            const filteredResult = promiseResult.filter((item) => item !== null) as Classe[];
+
+            return filteredResult;
         } catch (error){
             if (error instanceof Error){
-                throw new Error(`Erro ao buscar todos os ${this._tabela}: ${error.message}`);
+                throw new Error(`Erro ao buscar todos os ${this.tabela}: ${error.message}`);
             }
-            throw new Error(`Ocorreu um erro desconhecido ao buscar todos os ${this._tabela}.`);
+            throw new Error(`Ocorreu um erro desconhecido ao buscar todos os ${this.tabela}.`);
         }
     }
     get conexao(): Pool {

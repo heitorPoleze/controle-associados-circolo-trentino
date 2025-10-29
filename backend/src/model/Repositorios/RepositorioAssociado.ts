@@ -1,11 +1,8 @@
-import { Pool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
+import { Pool, PoolConnection, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 import { sexo } from "../../controller/types/sexo";
 import { condicao } from "../../controller/types/condicao";
 import { Repositorio } from "./Repositorio";
 import { Associado } from "../Classes/Associado/Associado";
-import { Telefone } from "../Classes/Telefone";
-import { Endereco } from "../Classes/Endereco";
-
 interface AssociadoRow extends RowDataPacket{
     uuid: string;
     nome: string;
@@ -21,7 +18,7 @@ interface AssociadoRow extends RowDataPacket{
 
 export class RepositorioAssociado extends Repositorio<Associado>{
     constructor(conexao: Pool) {
-        super(conexao, 'associados', 'uuid');
+        super(conexao, 'associados', 'uuidAssociado');
     }
     toDomain(row: AssociadoRow): Associado {
         return new Associado(
@@ -38,11 +35,11 @@ export class RepositorioAssociado extends Repositorio<Associado>{
         )
     }
 
-    async criar(associado: Associado): Promise<Associado> {
+    async criar(associado: Associado, poolConection: PoolConnection): Promise<Associado> {
         const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, nome, familia, localOrigem, dataNascimento, sexo, email, cpf, condicao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         
         try{
-            const [row] = await this.conexao.query<ResultSetHeader>(sql, [associado.uuid,associado.nome, associado.familia, associado.localOrigem, associado.dataNascimento, associado.sexo, associado.email, associado.cpf, associado.condicao]);
+            const [row] = await poolConection.query<ResultSetHeader>(sql, [associado.uuid,associado.nome, associado.familia, associado.localOrigem, associado.dataNascimento, associado.sexo, associado.email, associado.cpf, associado.condicao]);
             if(row.affectedRows === 0) {
                 throw new Error('Nenhum associado criado. Falha no banco de dados.');
             }
