@@ -2,7 +2,7 @@ import { Router } from "express";
 import { conexao } from "../config/sql";
 import { Associado } from "../model/Classes/Associado/Associado";
 import { RepositorioAssociado } from "../model/Repositorios/RepositorioAssociado";
-import { AssociadoService } from "../services/AssociadoService";
+import { AssociadoService } from "../services/AssociadoServices";
 
 const router = Router();
 const associadoService = new AssociadoService();
@@ -21,8 +21,7 @@ router.post("/associados", async (req, res) => {
 
 router.get("/associados", async (req, res) => {
     try{
-        const repAssociado = new RepositorioAssociado(conexao);
-        const associados = await repAssociado.buscarTodos();
+        const associados = await associadoService.buscarAssociados();
         res.status(200).json(associados);
     } catch (error) {
         if (error instanceof Error) {

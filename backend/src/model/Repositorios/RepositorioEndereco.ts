@@ -2,10 +2,10 @@ import { Endereco } from "../Classes/Endereco";;
 import { Pool, PoolConnection, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Repositorio } from "./Repositorio";
 import { RepositorioAssociado } from "./RepositorioAssociado";
+import { IBuscavelPorAssociado } from "../Interfaces/IBuscavelPorAssociado";
 
-//isto é um DTO?
 interface EnderecoRow extends RowDataPacket {
-    uuid: string
+    uuidEndereco: string
     logradouro: string;
     bairro: string;
     cidade: string;
@@ -15,15 +15,17 @@ interface EnderecoRow extends RowDataPacket {
     uuidAssociado: string
 }
 
-export class RepositorioEndereco extends Repositorio<Endereco> {
+export class RepositorioEndereco extends Repositorio<Endereco> implements IBuscavelPorAssociado<Endereco> {
 
+    private _uuidAssociado: string;
     constructor(conexao: Pool) {
         super(conexao, 'enderecos', 'uuidEndereco');
+        this._uuidAssociado = 'uuidAssociado_FK';
     }
 
     async toDomain(row: EnderecoRow): Promise<Endereco | null> {
         const repAssociado = new RepositorioAssociado(this.conexao);
-        const associado = await repAssociado.buscarTodosOsAtributosPorId(row.uuidAssociado);
+        const associado = await repAssociado.buscarTodosOsAtributosPorId(row.uuidAssociado_FK);
         if (associado) {
         return new Endereco(
             row.logradouro,
@@ -33,7 +35,7 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
             row.cep,
             row.pais,
             associado,
-            row.uuid
+            row.uuidEndereco
         );   
         }
         return null;
@@ -42,7 +44,7 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
 
 
     async criar(endereco: Endereco, poolConection: PoolConnection): Promise<Endereco> {
-        const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, logradouro, bairro, cidade, uf, cep, pais, uuidAssociado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, logradouro, bairro, cidade, uf, cep, pais, ${this._uuidAssociado}) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
         try{
             const [row] = await poolConection.query<ResultSetHeader>(sql, [endereco.uuid, endereco.logradouro, endereco.bairro, endereco.cidade, endereco.uf, endereco.cep, endereco.pais, endereco.associado.uuid]);
@@ -57,18 +59,24 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
             throw new Error('Ocorreu um erro desconhecido ao criar o endereço.');
         }
     }
-   async buscarPorIdAssociado(uuidAssociado: string): Promise<Endereco | null> {
-        const sql = `SELECT * FROM ${this.tabela} WHERE uuidAssociado = ?`;
+   async buscarPorIdAssociado(uuidAssociado: string): Promise<Endereco[] | null> {
+        const sql = `SELECT * FROM ${this.tabela} WHERE ${this._uuidAssociado} = ?`;
         try{
             const [rows] = await this.conexao.query<EnderecoRow[]>(sql, [uuidAssociado]);
 
-            const [result] = rows
-
-             if (!result){
+             if (rows.length === 0) {
                 return null;
             }
 
-            return this.toDomain(result);
+            const enderecos: Endereco[] = [];
+
+            for (const row of rows) {
+                const endereco = await this.toDomain(row);
+                if (endereco){
+                    enderecos.push(endereco);
+                }
+            }
+            return enderecos;
         }catch(error){
             if (error instanceof Error) {
                 throw new Error(error.message);
@@ -76,4 +84,20 @@ export class RepositorioEndereco extends Repositorio<Endereco> {
             throw new Error('Ocorreu um erro desconhecido ao buscar o endereço.');
         }
    }
+
+    async buscarTodos(): Promise<EnderecoRow[]> {
+        const sql = `SELECT * FROM ${this.tabela};`;
+        try {
+            const [rows] = await this.conexao.query<EnderecoRow[]>(sql);
+            
+            return rows;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar ${this.tabela}: ${error.message}`);
+            }
+            throw new Error(`Ocorreu um erro desconhecido ao buscar ${this.tabela}.`);
+        }
+    }
+
+    
 }

@@ -3,6 +3,7 @@ import { Pool, RowDataPacket, ResultSetHeader, PoolConnection } from 'mysql2/pro
 import { Repositorio } from "./Repositorio";
 import { RepositorioAssociado } from "./RepositorioAssociado";
 import { Associado } from "../Classes/Associado/Associado";
+import { IBuscavelPorAssociado } from "../Interfaces/IBuscavelPorAssociado";
 
 interface TelefoneRow extends RowDataPacket {
     uuidTelefone: string;
@@ -11,19 +12,25 @@ interface TelefoneRow extends RowDataPacket {
     uuidAssociado: string;
 }
 
-export class RepositorioTelefone extends Repositorio<Telefone> {
+export class RepositorioTelefone extends Repositorio<Telefone> implements IBuscavelPorAssociado<Telefone> {
+    private _uuidAssociado: string
     constructor(conexao: Pool) {
         super(conexao, 'telefones', 'uuidTelefone');
+        this._uuidAssociado = 'uuidAssociado_FK';
     }
 
     async toDomain(row: TelefoneRow): Promise<Telefone | null> {
         try {
             const repAssociado = new RepositorioAssociado(this.conexao);
-            const associado = await repAssociado.buscarTodosOsAtributosPorId(row.uuidAssociado);
+            const associado = await repAssociado.buscarTodosOsAtributosPorId(row.uuidAssociado_FK);
             if (associado) {
-                return new Telefone(row.ddd, row.numero, associado, row.uuidTelefone);
+                return new Telefone(
+                    row.ddd,
+                    row.numero, 
+                    associado, 
+                    row.uuidTelefone);
             }
-            return null
+            return null;
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(`Erro ao buscar telefone: ${error.message}`);
@@ -33,7 +40,7 @@ export class RepositorioTelefone extends Repositorio<Telefone> {
 
     }
     async criar(telefone: Telefone, poolConection: PoolConnection): Promise<Telefone> {
-        const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, ddd, numero, uuidAssociado) VALUES (?, ?, ?, ?)`;
+        const sql = `INSERT INTO ${this.tabela} (${this.colunaUuid}, ddd, numero, ${this._uuidAssociado}) VALUES (?, ?, ?, ?)`;
 
         try {
             const [result] = await poolConection.query<ResultSetHeader>(sql, [telefone.uuid, telefone.ddd, telefone.numero, telefone.associado.uuid]);
@@ -51,23 +58,43 @@ export class RepositorioTelefone extends Repositorio<Telefone> {
         }
     }
 
-       async buscarPorIdAssociado(uuidAssociado: string): Promise<Telefone | null> {
-        const sql = `SELECT * FROM ${this.tabela} WHERE uuidAssociado = ?`;
-        try{
+    async buscarPorIdAssociado(uuidAssociado: string): Promise<Telefone[] | null> {
+        const sql = `SELECT * FROM ${this.tabela} WHERE ${this._uuidAssociado} = ?`;
+        try {
             const [rows] = await this.conexao.query<TelefoneRow[]>(sql, [uuidAssociado]);
-
-            const [result] = rows
-
-             if (!result){
+             
+            if (rows.length === 0) {
                 return null;
             }
 
-            return this.toDomain(result);
-        }catch(error){
+            const telefones: Telefone[] = [];
+
+            for (const row of rows) {
+                const telefone = await this.toDomain(row);
+                if (telefone) {
+                    telefones.push(telefone);
+                }
+            }
+            return telefones;
+        } catch (error) {
             if (error instanceof Error) {
                 throw new Error(error.message);
             }
             throw new Error('Ocorreu um erro desconhecido ao buscar o endereço.');
         }
-   }
+    }
+
+    async buscarTodos(): Promise<TelefoneRow[]> {
+        const sql = `SELECT * FROM ${this.tabela};`;
+        try {
+            const [rows] = await this.conexao.query<TelefoneRow[]>(sql);
+
+            return rows;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar ${this.tabela}: ${error.message}`);
+            }
+            throw new Error(`Ocorreu um erro desconhecido ao buscar ${this.tabela}.`);
+        }
+    }
 }

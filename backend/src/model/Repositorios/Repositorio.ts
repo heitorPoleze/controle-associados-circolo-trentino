@@ -13,6 +13,7 @@ export abstract class Repositorio<Classe> implements IPesquisavel<Classe> {
     
     abstract toDomain(row: RowDataPacket): Classe | Promise<Classe | null>;
     abstract criar(objeto: Classe, poolConection: PoolConnection ): Promise<Classe>;
+    abstract buscarTodos(): Promise<RowDataPacket[] | Classe[]>
     async buscarTodosOsAtributosPorId(id: string): Promise<Classe | null>{
         const sql = `SELECT * FROM ${this.tabela} WHERE ${this.colunaUuid} = ?;`;
         
@@ -32,26 +33,8 @@ export abstract class Repositorio<Classe> implements IPesquisavel<Classe> {
             }
             throw new Error(`Ocorreu um erro desconhecido ao buscar ${this.tabela} por ID.`);
         }
-    }
-    async buscarTodos(): Promise<Classe[]>{
-        const sql = `SELECT * FROM ${this.tabela};`;
-        try{
-            const [rows] = await this.conexao.query<RowDataPacket[]>(sql);
-
-            const result = rows.map((row) => this.toDomain(row));
-
-            const promiseResult = await Promise.all(result);
-
-            const filteredResult = promiseResult.filter((item) => item !== null) as Classe[];
-
-            return filteredResult;
-        } catch (error){
-            if (error instanceof Error){
-                throw new Error(`Erro ao buscar todos os ${this.tabela}: ${error.message}`);
-            }
-            throw new Error(`Ocorreu um erro desconhecido ao buscar todos os ${this.tabela}.`);
-        }
-    }
+    } 
+    
     get conexao(): Pool {
         return this._conexao;
     }

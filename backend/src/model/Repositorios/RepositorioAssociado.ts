@@ -4,7 +4,7 @@ import { condicao } from "../../controller/types/condicao";
 import { Repositorio } from "./Repositorio";
 import { Associado } from "../Classes/Associado/Associado";
 interface AssociadoRow extends RowDataPacket{
-    uuid: string;
+    uuidAssociado: string;
     nome: string;
     familia: string;
     localOrigem: string;
@@ -30,7 +30,7 @@ export class RepositorioAssociado extends Repositorio<Associado>{
             row.familia,
             row.localOrigem,
             row.condicao,
-            row.uuid,
+            row.uuidAssociado,
             row.dataAssociacao
         )
     }
@@ -51,5 +51,20 @@ export class RepositorioAssociado extends Repositorio<Associado>{
             throw new Error('Ocorreu um erro desconhecido ao criar o associado.');
         }
     }
+
+    async buscarTodos(): Promise<Associado[]> {
+        const sql = `SELECT * FROM ${this.tabela};`;
+        try {
+            const [rows] = await this.conexao.query<AssociadoRow[]>(sql);
+            
+            return rows.map((row) => this.toDomain(row));
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar ${this.tabela}: ${error.message}`);
+            }
+            throw new Error(`Ocorreu um erro desconhecido ao buscar ${this.tabela}.`);
+        }
+    }
+
 
 }
