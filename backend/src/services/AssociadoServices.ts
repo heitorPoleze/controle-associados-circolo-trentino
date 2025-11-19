@@ -73,7 +73,7 @@ export class AssociadoService {
                 );
                 return this._repEndereco.criar(enderecoObjeto, connection);
             });
-
+            
             dados.telefones.map(telefone => {
                 const telefoneObjeto = new Telefone(
                     telefone.ddd,
@@ -105,22 +105,19 @@ export class AssociadoService {
                     LEFT JOIN anotacoes an
                     ON a.uuidAssociado = an.uuidAssociado_FK;`;
 
-        const vetAssociados: AssociadoPayload[] = [];
+        const mapAssociados = new Map<string, AssociadoPayload>();
         try {
-            
             const [rows] = await this._conexao.query<RowDataPacket[]>(sql);
 
             for (const row of rows) {
-                const associadoEncontrado = vetAssociados.find(associado => associado.uuid === row.uuidAssociado);
-                
-                if (!associadoEncontrado) {
-
-                    const payload: AssociadoPayload = {
+                if(!mapAssociados.has(row.uuidAssociado)) {
+                 
+                    mapAssociados.set(row.uuidAssociado, {
                         nome: row.nome,
                         familia: row.familia,
                         localOrigem: row.localOrigem,
                         dataNascimento: row.dataNascimento,
-                        sexo: row.sexo,
+                        sexo: row.sexo, 
                         email: row.email,
                         cpf: row.cpf,
                         condicao: row.condicao,
@@ -129,61 +126,54 @@ export class AssociadoService {
                         enderecos: [],
                         telefones: [],
                         anotacoes: []
-                    };
-
-                    vetAssociados.push(payload);
+                    })
                 }
-                const endereco: EnderecoPayload | null = (row.logradouro) ? {
-                    logradouro: row.logradouro,
-                    bairro: row.bairro,
-                    cidade: row.cidade,
-                    uf: row.uf,
-                    cep: row.cep,
-                    pais: row.pais,
-                    uuid: row.uuidEndereco
-                } : null;
 
-                if (endereco) {
-                    const enderecoDoAssociado = vetAssociados.find(associado => associado.uuid == row.uuidAssociado_FK);
+                const associado = mapAssociados.get(row.uuidAssociado);
+                if(!associado) {
+                    throw new Error('Ocorreu um erro ao buscar os associados.');
+                }
 
-                    if (enderecoDoAssociado) {
-                        enderecoDoAssociado.enderecos.push(endereco);
+                if(row.uuidEndereco) {
+                    if(!associado.enderecos.some(endereco => endereco.uuid == row.uuidEndereco)) {
+                        associado.enderecos.push({
+                            logradouro: row.logradouro,
+                            bairro: row.bairro,
+                            cidade: row.cidade,
+                            uf: row.uf,
+                            cep: row.cep,
+                            pais: row.pais,
+                            uuid: row.uuidEndereco
+                        })
+                    }
+                }
+                console.log(associado.enderecos);
+                if(row.uuidTelefone) {
+                    if(!associado.telefones.some(telefone => telefone.uuid == row.uuidTelefone)) {
+                        associado.telefones.push({
+                            ddd: row.ddd,
+                            numero: row.numero,
+                            uuid: row.uuidTelefone
+                        })
                     }
                 }
 
-                const telefone: TelefonePayload | null = (row.numero) ? {
-                    ddd: row.ddd,
-                    numero: row.numero,
-                    uuid: row.uuidTelefone
-                } : null;
-                if (telefone) {
-                    const telefoneDoAssociado = vetAssociados.find(associado => associado.uuid == row.uuidAssociado_FK);
-
-                    if (telefoneDoAssociado) {
-                        telefoneDoAssociado.telefones.push(telefone);
-                    }
-                }
-
-                const anotacao: AnotacaoPayload | null = (row.anotacao) ? {
-                    descricao: row.anotacao,
-                    dataAnotacao: row.dataAnotacao,
-                    uuid: row.uuidAnotacao
-                } : null;
-                if (anotacao) {
-                    const anotacaoDoAssociado = vetAssociados.find(associado => associado.uuid == row.uuidAssociado_FK);
-
-                    if (anotacaoDoAssociado) {
-                        anotacaoDoAssociado.anotacoes.push(anotacao);
+                if(row.uuidAnotacao) {
+                    if(!associado.anotacoes.some(anotacao => anotacao.uuid == row.uuidAnotacao)) {
+                        associado.anotacoes.push({
+                            descricao: row.descricao,
+                            dataAnotacao: row.dataAnotacao,
+                            uuid: row.uuidAnotacao
+                        })
                     }
                 }
             }
+            return Array.from(mapAssociados.values());
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(`Erro ao buscar associados: ${error.message}`);
             }
             throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
-        } finally {
-            return vetAssociados;
         }
     }
 

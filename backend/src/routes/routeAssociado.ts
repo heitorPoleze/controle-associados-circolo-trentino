@@ -38,6 +38,6 @@ router.get("/associados/:id", async (req, res) => {
                 mensagem: error.message});
         }
     }
-})
+});
 
 export default router;

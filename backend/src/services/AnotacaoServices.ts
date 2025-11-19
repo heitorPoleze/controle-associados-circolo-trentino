@@ -23,7 +23,6 @@ export class AnotacaoService {
 
     async criarAnotacao(payload: AnotacaoPayload): Promise<Anotacao> {
         
-        console.log('seguiu')
         const connection = await this._conexao.getConnection();        
         try {
             await connection.beginTransaction();
