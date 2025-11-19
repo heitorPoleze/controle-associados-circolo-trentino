@@ -1,4 +1,4 @@
-import { Pool } from "mysql2/promise"
+import { Pool, RowDataPacket } from "mysql2/promise"
 import { conexao } from "../config/sql"
 import { RepositorioAnotacao } from "../model/Repositorios/RepositorioAnotacao"
 import { Anotacao } from "../model/Classes/Anotacao"
@@ -21,6 +21,13 @@ export class AnotacaoService {
         this._repAssociado = new RepositorioAssociado(conexao);
     }
 
+    public static payloadToAnotacao (row: RowDataPacket) {
+        return {
+            descricao: row.descricao || "",
+            dataAnotacao: row.dataAnotacao,
+            uuidAnotacao: row.uuidAnotacao
+        }
+    }
     async criarAnotacao(payload: AnotacaoPayload): Promise<Anotacao> {
         
         const connection = await this._conexao.getConnection();        

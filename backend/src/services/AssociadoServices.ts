@@ -8,9 +8,9 @@ import { Telefone } from "../model/Classes/Telefone";
 import { RepositorioAssociado } from "../model/Repositorios/RepositorioAssociado";
 import { RepositorioEndereco } from "../model/Repositorios/RepositorioEndereco";
 import { RepositorioTelefone } from "../model/Repositorios/RepositorioTelefone";
-import { TelefonePayload } from "./TelefoneServices";
-import { EnderecoPayload } from "./EnderecoServices";
-import { AnotacaoPayload } from "./AnotacaoServices";
+import { TelefonePayload, TelefoneServices } from "./TelefoneServices";
+import { EnderecoPayload, EnderecoService } from "./EnderecoServices";
+import { AnotacaoPayload, AnotacaoService} from "./AnotacaoServices";
 import { RepositorioAnotacao } from "../model/Repositorios/RepositorioAnotacao";
 
 interface AssociadoPayload {
@@ -35,7 +35,6 @@ export class AssociadoService {
     private _repTelefone: RepositorioTelefone;
     private _repAnotacao: RepositorioAnotacao;
     private _conexao: Pool;
-
     constructor() {
         this._conexao = conexao;
         this._repAssociado = new RepositorioAssociado(conexao);
@@ -43,6 +42,78 @@ export class AssociadoService {
         this._repTelefone = new RepositorioTelefone(conexao);
         this._repAnotacao = new RepositorioAnotacao(conexao);
     }
+
+    payloadToAssociado = (row: RowDataPacket) => {
+        return {
+            nome: row.nome ?? "",
+            familia: row.familia ?? "",
+            localOrigem: row.localOrigem ?? "",
+            dataNascimento: row.dataNascimento ?? "",
+            sexo: row.sexo ?? "",
+            email: row.email ?? "",
+            cpf: row.cpf ?? "",
+            condicao: row.condicao ?? "",
+            uuid: row.uuidAssociado,
+            dataAssociacao: row.dataAssociacao,
+            enderecos: [],
+            telefones: [],
+            anotacoes: []
+        }
+    }
+
+    async buscarAssociados(): Promise<AssociadoPayload[]> {
+        const sql = `SELECT * FROM associados a
+                    LEFT JOIN enderecos e 
+                    ON a.uuidAssociado = e.uuidAssociado_FK
+                    LEFT JOIN telefones t
+                    ON a.uuidAssociado = t.uuidAssociado_FK
+                    LEFT JOIN anotacoes an
+                    ON a.uuidAssociado = an.uuidAssociado_FK;`;
+
+        const mapAssociados = new Map<string, AssociadoPayload>();
+        try {
+            const [rows] = await this._conexao.query<RowDataPacket[]>(sql);
+
+            for (const row of rows) {
+                if (!mapAssociados.has(row.uuidAssociado)) {
+
+                    mapAssociados.set(row.uuidAssociado, this.payloadToAssociado(row));
+                }
+
+                const associado = mapAssociados.get(row.uuidAssociado);
+                if (!associado) {
+                    throw new Error('Ocorreu um erro ao buscar os associados.');
+                }
+
+                if (row.uuidEndereco) {
+                    if (!associado.enderecos.some(endereco => endereco.uuid == row.uuidEndereco)) {
+                        const endereco = EnderecoService.payloadToEndereco(row);
+                        associado.enderecos.push(endereco);
+                    }
+                }
+                if (row.uuidTelefone) {
+                    if (!associado.telefones.some(telefone => telefone.uuid == row.uuidTelefone)) {
+                        const telefone = TelefoneServices.payloadToTelefone(row);
+                        associado.telefones.push(telefone)
+                    }
+                }
+
+                if (row.uuidAnotacao) {
+                    if (!associado.anotacoes.some(anotacao => anotacao.uuid == row.uuidAnotacao)) {
+                        const anotacao = AnotacaoService.payloadToAnotacao(row);
+                        associado.anotacoes.push(anotacao);
+                    }
+                }
+            }
+            return Array.from(mapAssociados.values());
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar associados: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
+        }
+    }
+
 
     async criarAssociadoCompleto(dados: AssociadoPayload): Promise<Associado> {
         const connection = await conexao.getConnection();
@@ -73,7 +144,7 @@ export class AssociadoService {
                 );
                 return this._repEndereco.criar(enderecoObjeto, connection);
             });
-            
+
             dados.telefones.map(telefone => {
                 const telefoneObjeto = new Telefone(
                     telefone.ddd,
@@ -95,88 +166,6 @@ export class AssociadoService {
         }
     }
 
-    //FUNÇÃO EXTREMAMENTE GRANDE. COMO REFATORAR?
-    async buscarAssociados(): Promise<AssociadoPayload[]> {
-        const sql = `SELECT * FROM associados a
-                    LEFT JOIN enderecos e 
-                    ON a.uuidAssociado = e.uuidAssociado_FK
-                    LEFT JOIN telefones t
-                    ON a.uuidAssociado = t.uuidAssociado_FK
-                    LEFT JOIN anotacoes an
-                    ON a.uuidAssociado = an.uuidAssociado_FK;`;
-
-        const mapAssociados = new Map<string, AssociadoPayload>();
-        try {
-            const [rows] = await this._conexao.query<RowDataPacket[]>(sql);
-
-            for (const row of rows) {
-                if(!mapAssociados.has(row.uuidAssociado)) {
-                 
-                    mapAssociados.set(row.uuidAssociado, {
-                        nome: row.nome,
-                        familia: row.familia,
-                        localOrigem: row.localOrigem,
-                        dataNascimento: row.dataNascimento,
-                        sexo: row.sexo, 
-                        email: row.email,
-                        cpf: row.cpf,
-                        condicao: row.condicao,
-                        uuid: row.uuidAssociado,
-                        dataAssociacao: row.dataAssociacao,
-                        enderecos: [],
-                        telefones: [],
-                        anotacoes: []
-                    })
-                }
-
-                const associado = mapAssociados.get(row.uuidAssociado);
-                if(!associado) {
-                    throw new Error('Ocorreu um erro ao buscar os associados.');
-                }
-
-                if(row.uuidEndereco) {
-                    if(!associado.enderecos.some(endereco => endereco.uuid == row.uuidEndereco)) {
-                        associado.enderecos.push({
-                            logradouro: row.logradouro,
-                            bairro: row.bairro,
-                            cidade: row.cidade,
-                            uf: row.uf,
-                            cep: row.cep,
-                            pais: row.pais,
-                            uuid: row.uuidEndereco
-                        })
-                    }
-                }
-                console.log(associado.enderecos);
-                if(row.uuidTelefone) {
-                    if(!associado.telefones.some(telefone => telefone.uuid == row.uuidTelefone)) {
-                        associado.telefones.push({
-                            ddd: row.ddd,
-                            numero: row.numero,
-                            uuid: row.uuidTelefone
-                        })
-                    }
-                }
-
-                if(row.uuidAnotacao) {
-                    if(!associado.anotacoes.some(anotacao => anotacao.uuid == row.uuidAnotacao)) {
-                        associado.anotacoes.push({
-                            descricao: row.descricao,
-                            dataAnotacao: row.dataAnotacao,
-                            uuid: row.uuidAnotacao
-                        })
-                    }
-                }
-            }
-            return Array.from(mapAssociados.values());
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(`Erro ao buscar associados: ${error.message}`);
-            }
-            throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
-        }
-    }
-
     async buscarAssociadoCompletoPorId(uuidAssociado: string): Promise<AssociadoPayload | null> {
 
         try {
@@ -184,7 +173,7 @@ export class AssociadoService {
             if (!associado) {
                 return null;
             }
-            
+
             const enderecos = await this._repEndereco.buscarPorIdAssociado(uuidAssociado);
             const enderecosEmPayload = enderecos ? enderecos.map(endereco => {
                 return {
@@ -196,8 +185,8 @@ export class AssociadoService {
                     pais: endereco.pais,
                     uuid: endereco.uuid
                 }
-            }): null;
-            
+            }) : null;
+
             const telefones = await this._repTelefone.buscarPorIdAssociado(uuidAssociado);
             const telefonesEmPayload = telefones ? telefones.map(telefone => {
                 return {
@@ -205,7 +194,7 @@ export class AssociadoService {
                     numero: telefone.numero,
                     uuid: telefone.uuid
                 }
-            }): null;
+            }) : null;
 
             const anotacoes = await this._repAnotacao.buscarPorIdAssociado(uuidAssociado);
             const anotacoesEmPayload = anotacoes ? anotacoes.map(anotacao => {
@@ -214,9 +203,9 @@ export class AssociadoService {
                     dataAnotacao: anotacao.dataAnotacao,
                     uuid: anotacao.uuid
                 }
-            }): null;
+            }) : null;
 
-            const payload: AssociadoPayload  = {
+            const payload: AssociadoPayload = {
                 nome: associado.nome,
                 familia: associado.familia,
                 localOrigem: associado.localOrigem,
