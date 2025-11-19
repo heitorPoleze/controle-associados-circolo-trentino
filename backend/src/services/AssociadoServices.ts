@@ -10,6 +10,8 @@ import { RepositorioEndereco } from "../model/Repositorios/RepositorioEndereco";
 import { RepositorioTelefone } from "../model/Repositorios/RepositorioTelefone";
 import { TelefonePayload } from "./TelefoneServices";
 import { EnderecoPayload } from "./EnderecoServices";
+import { AnotacaoPayload } from "./AnotacaoServices";
+import { RepositorioAnotacao } from "../model/Repositorios/RepositorioAnotacao";
 
 interface AssociadoPayload {
     nome: string;
@@ -24,12 +26,14 @@ interface AssociadoPayload {
     dataAssociacao?: Date | undefined;
     enderecos: EnderecoPayload[];
     telefones: TelefonePayload[];
+    anotacoes: AnotacaoPayload[];
 }
 
 export class AssociadoService {
     private _repAssociado: RepositorioAssociado;
     private _repEndereco: RepositorioEndereco;
     private _repTelefone: RepositorioTelefone;
+    private _repAnotacao: RepositorioAnotacao;
     private _conexao: Pool;
 
     constructor() {
@@ -37,6 +41,7 @@ export class AssociadoService {
         this._repAssociado = new RepositorioAssociado(conexao);
         this._repEndereco = new RepositorioEndereco(conexao);
         this._repTelefone = new RepositorioTelefone(conexao);
+        this._repAnotacao = new RepositorioAnotacao(conexao);
     }
 
     async criarAssociadoCompleto(dados: AssociadoPayload): Promise<Associado> {
@@ -96,10 +101,13 @@ export class AssociadoService {
                     LEFT JOIN enderecos e 
                     ON a.uuidAssociado = e.uuidAssociado_FK
                     LEFT JOIN telefones t
-                    ON a.uuidAssociado = t.uuidAssociado_FK;`;
+                    ON a.uuidAssociado = t.uuidAssociado_FK
+                    LEFT JOIN anotacoes an
+                    ON a.uuidAssociado = an.uuidAssociado_FK;`;
 
         const vetAssociados: AssociadoPayload[] = [];
         try {
+            
             const [rows] = await this._conexao.query<RowDataPacket[]>(sql);
 
             for (const row of rows) {
@@ -119,7 +127,8 @@ export class AssociadoService {
                         uuid: row.uuidAssociado,
                         dataAssociacao: row.dataAssociacao,
                         enderecos: [],
-                        telefones: []
+                        telefones: [],
+                        anotacoes: []
                     };
 
                     vetAssociados.push(payload);
@@ -133,6 +142,7 @@ export class AssociadoService {
                     pais: row.pais,
                     uuid: row.uuidEndereco
                 } : null;
+
                 if (endereco) {
                     const enderecoDoAssociado = vetAssociados.find(associado => associado.uuid == row.uuidAssociado_FK);
 
@@ -151,6 +161,19 @@ export class AssociadoService {
 
                     if (telefoneDoAssociado) {
                         telefoneDoAssociado.telefones.push(telefone);
+                    }
+                }
+
+                const anotacao: AnotacaoPayload | null = (row.anotacao) ? {
+                    descricao: row.anotacao,
+                    dataAnotacao: row.dataAnotacao,
+                    uuid: row.uuidAnotacao
+                } : null;
+                if (anotacao) {
+                    const anotacaoDoAssociado = vetAssociados.find(associado => associado.uuid == row.uuidAssociado_FK);
+
+                    if (anotacaoDoAssociado) {
+                        anotacaoDoAssociado.anotacoes.push(anotacao);
                     }
                 }
             }
@@ -173,7 +196,6 @@ export class AssociadoService {
             }
             
             const enderecos = await this._repEndereco.buscarPorIdAssociado(uuidAssociado);
-
             const enderecosEmPayload = enderecos ? enderecos.map(endereco => {
                 return {
                     logradouro: endereco.logradouro,
@@ -187,12 +209,20 @@ export class AssociadoService {
             }): null;
             
             const telefones = await this._repTelefone.buscarPorIdAssociado(uuidAssociado);
-            console.log(telefones);
             const telefonesEmPayload = telefones ? telefones.map(telefone => {
                 return {
                     ddd: telefone.ddd,
                     numero: telefone.numero,
                     uuid: telefone.uuid
+                }
+            }): null;
+
+            const anotacoes = await this._repAnotacao.buscarPorIdAssociado(uuidAssociado);
+            const anotacoesEmPayload = anotacoes ? anotacoes.map(anotacao => {
+                return {
+                    descricao: anotacao.descricao,
+                    dataAnotacao: anotacao.dataAnotacao,
+                    uuid: anotacao.uuid
                 }
             }): null;
 
@@ -208,7 +238,8 @@ export class AssociadoService {
                 uuid: associado.uuid,
                 dataAssociacao: associado.dataAssociacao,
                 enderecos: enderecosEmPayload || [],
-                telefones: telefonesEmPayload || []
+                telefones: telefonesEmPayload || [],
+                anotacoes: anotacoesEmPayload || []
             }
             return payload;
         } catch (error) {

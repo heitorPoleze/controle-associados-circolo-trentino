@@ -1,7 +1,5 @@
-import { Endereco } from "../Endereco";
 import { sexo } from "../../../controller/types/sexo";
 import {v4 as uuidv4} from 'uuid';
-import { Telefone } from "../Telefone";
 import { condicao } from "../../../controller/types/condicao";
 
 
@@ -16,6 +14,7 @@ export class Associado {
     private _dataAssociacao: Date | undefined;
     private _cpf: string;
     private _condicao: condicao;
+
     constructor(nome: string,  dataNascimento: string, sexo: sexo, email: string, cpf: string, familia: string = "", localOrigem: string = "",condicao: condicao = "Ativo", uuid?: string, dataAssociacao?: Date) {
         this._uuid = uuid ?? uuidv4();
         this._dataAssociacao = dataAssociacao;

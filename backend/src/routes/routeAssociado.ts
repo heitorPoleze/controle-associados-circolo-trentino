@@ -1,7 +1,4 @@
 import { Router } from "express";
-import { conexao } from "../config/sql";
-import { Associado } from "../model/Classes/Associado/Associado";
-import { RepositorioAssociado } from "../model/Repositorios/RepositorioAssociado";
 import { AssociadoService } from "../services/AssociadoServices";
 
 const router = Router();
