@@ -8,9 +8,9 @@ import { Telefone } from "../model/Classes/Telefone";
 import { RepositorioAssociado } from "../model/Repositorios/RepositorioAssociado";
 import { RepositorioEndereco } from "../model/Repositorios/RepositorioEndereco";
 import { RepositorioTelefone } from "../model/Repositorios/RepositorioTelefone";
-import { TelefonePayload, TelefoneServices } from "./TelefoneServices";
-import { EnderecoPayload, EnderecoService } from "./EnderecoServices";
-import { AnotacaoPayload, AnotacaoService} from "./AnotacaoServices";
+import { TelefonePayload } from "./TelefoneServices";
+import { EnderecoPayload } from "./EnderecoServices";
+import { AnotacaoPayload} from "./AnotacaoServices";
 import { RepositorioAnotacao } from "../model/Repositorios/RepositorioAnotacao";
 
 interface AssociadoPayload {
@@ -60,8 +60,8 @@ export class AssociadoService {
             anotacoes: []
         }
     }
-
-    async buscarAssociados(): Promise<AssociadoPayload[]> {
+/*
+    async buscarDadosCompletosDosAssociados(): Promise<AssociadoPayload[]> {
         const sql = `SELECT * FROM associados a
                     LEFT JOIN enderecos e 
                     ON a.uuidAssociado = e.uuidAssociado_FK
@@ -113,7 +113,38 @@ export class AssociadoService {
             throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
         }
     }
+*/
+    async buscarTodos(): Promise<AssociadoPayload[]> {
+        
+        try{
+            const vetAssociados = await this._repAssociado.buscarTodos();
 
+            const payloadAssociados = vetAssociados.map((associado) => {
+                return {
+                    nome: associado.nome,
+                    familia: associado.familia,
+                    localOrigem: associado.localOrigem,
+                    dataNascimento: associado.dataNascimento,
+                    sexo: associado.sexo,
+                    email: associado.email,
+                    cpf: associado.cpf,
+                    condicao: associado.condicao,
+                    uuid: associado.uuid,
+                    dataAssociacao: associado.dataAssociacao,
+                    enderecos: [],
+                    telefones: [],
+                    anotacoes: []
+                }
+            });
+
+            return payloadAssociados;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar associados: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
+        }
+    }
 
     async criarAssociadoCompleto(dados: AssociadoPayload): Promise<Associado> {
         const connection = await conexao.getConnection();

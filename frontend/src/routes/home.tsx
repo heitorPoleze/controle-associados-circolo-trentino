@@ -3,12 +3,6 @@
 function Home(){
     return (
         <>
-        {
-        // header
-        }
-        {
-        //<Link to={}></Link>
-        }
         <h2>2</h2>
         <h2>2</h2>
         <h2>2</h2>
@@ -30,9 +24,6 @@ function Home(){
         <h2>2</h2>
         <h2>2</h2>
         <h2>2</h2>
-        {
-        // footer
-        }
         </>
     )
 }

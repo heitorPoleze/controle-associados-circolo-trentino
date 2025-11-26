@@ -18,7 +18,7 @@ router.post("/associados", async (req, res) => {
 
 router.get("/associados", async (req, res) => {
     try{
-        const associados = await associadoService.buscarAssociados();
+        const associados = await associadoService.buscarTodos();
         res.status(200).json(associados);
     } catch (error) {
         if (error instanceof Error) {
