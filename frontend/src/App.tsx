@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Home from './routes/home';
 import Associados from './routes/associados';
-import AssociadoDetalhado from './routes/associadoDetalhado';
+import AssociadoDetalhado from './routes/AssociadoDetalhado';
+import { NotFound } from './routes/notFound/notFound';
 
 function App() {
 
@@ -13,9 +14,11 @@ function App() {
       <Header />  
       <main>
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Home/>} />
         <Route path='/associados' element={<Associados />} />
         <Route path='/associados/:id' element={<AssociadoDetalhado />} />
+
+        <Route path='*' element={<NotFound/>} />
       </Routes>
       </main>
     </BrowserRouter>

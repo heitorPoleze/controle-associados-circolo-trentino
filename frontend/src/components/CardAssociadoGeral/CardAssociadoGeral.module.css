@@ -1,0 +1,26 @@
+
+.dataAssociacao {
+  margin-top: auto; 
+  font-size: 0.75rem;
+  color: #888;
+  border-top: 1px dashed #eee;
+  padding-top: 0.5rem;
+  text-align: center;
+}
+
+
+
+.ativo {
+   color: var(--color-green1, #627254);
+   font-weight: 600;
+}
+
+.inativo {
+    color: var(--color-amarelo, #F2CA50);
+    font-weight: 600;
+}
+
+.cancelado {
+    color: var(--color-red2, #ff4040);
+    font-weight: 600;
+}

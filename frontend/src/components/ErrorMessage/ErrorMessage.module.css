@@ -1,0 +1,21 @@
+
+.errorMessage {
+    background-color: rgba(140, 22, 66, 0.1);
+    
+    color: var(--color-vinho, #8C1642);
+    
+    border: 1px solid var(--color-vinho, #8C1642);
+    
+    padding: 1rem;
+    border-radius: 6px;
+    
+    font-family: "Tektur", sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-align: center;
+    
+    margin: 1rem 0;
+    
+    width: 100%;
+    box-sizing: border-box;
+}

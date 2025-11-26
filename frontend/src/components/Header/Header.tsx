@@ -1,18 +1,18 @@
 import { NavLink } from "react-router-dom";
-import "./Header.css";
+import styles from "./Header.module.css";
 import logo from "../../../assets/logo.png";
 function Header() {
   return (
-    <header className="header">
-      <div className="header-container">
-        <div className="logo">
-          <img src={logo} alt="Logo" className="logoimg" />
+    <header className={styles['header']}>
+      <div className={styles['header-container']}>
+        <div className={styles['logo']}>
+          <img src={logo} alt="Logo" className={styles['logoimg']} />
         </div>
-        <nav className="header-nav">
+        <nav className={styles['header-nav']}>
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
+              isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
             }
             end
           >
@@ -21,7 +21,7 @@ function Header() {
           <NavLink
             to="/associados"
             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
+              isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
             }
           >
             Associado
@@ -29,7 +29,7 @@ function Header() {
           <NavLink
             to="/anotacoes"
             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
+              isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
             }
           >
             Anotações
@@ -37,7 +37,7 @@ function Header() {
           <NavLink
             to="/grupos-artisticos"
             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
+              isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
             }
           >
             Grupos Artísticos
@@ -45,7 +45,7 @@ function Header() {
           <NavLink
             to="/pagamentos"
             className={({ isActive }) =>
-              isActive ? "nav-link active" : "nav-link"
+              isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
             }
           >
             Pagamentos

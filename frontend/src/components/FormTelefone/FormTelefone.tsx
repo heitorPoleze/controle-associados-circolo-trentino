@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { criarTelefone } from "../../services/telefoneServices";
+
 
 
 function FormTelefone() {
@@ -13,7 +13,7 @@ function FormTelefone() {
     const formData = { ddd: ddd, numero: numero };
     
     try {
-        await criarTelefone(formData);
+        //await criarTelefone(formData);
         alert('Telefone criado com sucesso!');
         setDdd('');
         setNumero('');

@@ -1,3 +1,4 @@
+/*
 import { useState } from "react";
 import { criarEndereco } from "../services/enderecoServices";
 
@@ -67,4 +68,4 @@ function FormEndereco(){
     )
 }
 
-export default FormEndereco;
+export default FormEndereco;*/

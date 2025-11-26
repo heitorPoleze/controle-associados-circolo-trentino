@@ -1,0 +1,50 @@
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh; 
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-preto, #1B110F);
+}
+
+.not-found-title {
+    font-size: 8rem;
+    font-weight: 900;
+    color: var(--color-vinho, #8C1642);
+    margin: 0;
+    line-height: 1;
+    font-family: "Tektur", sans-serif;
+    text-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+}
+
+.not-found-subtitle {
+    font-size: 2rem;
+    margin-top: 1rem;
+    color: var(--color-marrom, #361617);
+}
+
+.not-found-text {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    margin-bottom: 2.5rem;
+    color: #555;
+    max-width: 500px;
+}
+
+.not-found-button {
+    background-color: var(--color-vinho, #8C1642);
+    color: var(--color-white, #f2f2f2);
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: transform 0.2s, background-color 0.2s;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.not-found-button:hover {
+    background-color: var(--color-laranja2, #D94929);
+    transform: translateY(-2px);
+}
