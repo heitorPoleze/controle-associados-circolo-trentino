@@ -40,4 +40,27 @@ router.get("/associados/:id", async (req, res) => {
     }
 });
 
+router.put("/associados/:id", async (req, res) => {
+    try{
+        const associado = await associadoService.updateAssociado(req.params.id, req.body);
+        res.status(200).json(associado);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ 
+                mensagem: error.message});
+        }
+    }
+});
+
+router.delete("/associados/:id", async (req, res) => {
+    try{
+        const associado = await associadoService.deleteAssociado(req.params.id);
+        res.status(200).json(associado);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ 
+                mensagem: error.message});
+        }
+    }
+})
 export default router;

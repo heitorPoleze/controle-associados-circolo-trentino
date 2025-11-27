@@ -34,9 +34,7 @@ export class AssociadoService {
     private _repEndereco: RepositorioEndereco;
     private _repTelefone: RepositorioTelefone;
     private _repAnotacao: RepositorioAnotacao;
-    private _conexao: Pool;
     constructor() {
-        this._conexao = conexao;
         this._repAssociado = new RepositorioAssociado(conexao);
         this._repEndereco = new RepositorioEndereco(conexao);
         this._repTelefone = new RepositorioTelefone(conexao);
@@ -259,4 +257,46 @@ export class AssociadoService {
             throw new Error('Ocorreu um erro desconhecido ao buscar a transação.');
         }
     }
+
+    async updateAssociado(id: string, atributos: string[]): Promise<AssociadoPayload | null> {
+        try{
+            const associado = await this._repAssociado.update(id, atributos);
+
+            if (!associado) {
+                return null;
+            }
+            return {
+                uuid: associado.uuid,
+                nome: associado.nome,
+                familia: associado.familia,
+                localOrigem: associado.localOrigem,
+                dataNascimento: associado.dataNascimento,
+                sexo: associado.sexo,
+                email: associado.email,
+                cpf: associado.cpf,
+                condicao: associado.condicao,
+                dataAssociacao: associado.dataAssociacao,
+                enderecos: [],
+                telefones: [],
+                anotacoes: []
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar a transação: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar a transação.');
+        }
+    }
+
+    async deleteAssociado(id: string): Promise<void> {
+       try{
+            return await this._repAssociado.delete(id);
+       } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar a transação: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar a transação.');
+        }
+    }
+
 }
