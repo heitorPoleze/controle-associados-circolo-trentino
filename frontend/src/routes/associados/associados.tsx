@@ -3,7 +3,7 @@ import {
   AssociadoServices,
   type AssociadoData,
 } from "../../services/AssociadoServices";
-import CardAssociadoGeral from "../../components/CardAssociadoGeral/CardAssociadoGeral";
+import CardAssociadoGeral from "../../components/Cards/CardAssociadoGeral/CardAssociadoGeral";
 import Loading from "../../components/Loading/Loading";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { Link } from "react-router-dom";
@@ -51,14 +51,14 @@ function Associados() {
       >
         <h1>Associados</h1>
         <Link
-          to="/criarAssociado"
+          to="/cadastrarAssociado"
           className={styles["link-cadastrar"]}
         >
           + Cadastrar Associado
         </Link>
       </div>
 
-      {erro ? (
+      {erro? (
         <ErrorMessage message={erro} />
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -67,7 +67,7 @@ function Associados() {
               key={associado.uuid}
               id={associado.uuid}
               titulo={associado.nome}
-              dataAssociacao={associado.dataAssociacao.split("T")[0]}
+              dataAssociacao={associado.dataAssociacao?.split("T")[0]}
               condicao={associado.condicao}
             />
           ))}

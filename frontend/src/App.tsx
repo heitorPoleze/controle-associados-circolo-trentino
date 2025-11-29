@@ -5,7 +5,7 @@ import Home from './routes/home';
 import Associados from './routes/associados/associados';
 import AssociadoDetalhado from './routes/associadoDetalhado';
 import { NotFound } from './routes/notFound/notFound';
-import CriarAssociado from './routes/criarAssociado';
+import CadastrarAssociado from './routes/cadastrarAssociado';
 
 function App() {
 
@@ -18,7 +18,7 @@ function App() {
         <Route path='/' element={<Home/>} />
         <Route path='/associados' element={<Associados />} />
         <Route path='/associados/:id' element={<AssociadoDetalhado />} />
-        <Route path='/criarAssociado' element={<CriarAssociado />} />
+        <Route path='/cadastrarAssociado' element={<CadastrarAssociado />} />
         <Route path='*' element={<NotFound/>} />
       </Routes>
       </main>
