@@ -32,7 +32,7 @@
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem; /* Aumentei um pouco o espaçamento para ficar mais leve */
+  gap: 1.5rem; 
   flex-wrap: wrap;
   max-width: 1280px;
   margin: 0 auto;

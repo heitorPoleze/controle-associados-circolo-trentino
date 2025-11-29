@@ -7,7 +7,7 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
     <>
       <h3 className={styles["section-title"]}>Dados Pessoais</h3>
       <FormInput
-        className={styles["full-width"]}
+        col={8}
         label="Nome Completo"
         error={error.nome}
         required={true}
@@ -18,7 +18,7 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
       />
     
       <FormInput 
-        className={styles["full-width"]}
+        col={4}
         label="CPF"
         error={error.cpf}
         required={true}
@@ -29,8 +29,8 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
       />
 
       <FormInput 
-        className={styles["full-width"]}
-        label="Data de Nascimento"
+        col={3}
+        label="Nascimento"
         error={error.dataNascimento}
         required={true}
         name="dataNascimento"
@@ -40,7 +40,7 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
         type="date"
       />
 
-      <div className={styles["form-group"]}>
+      <div className={`${styles['col-2']}`}>
         <label className={styles["label"]}>Sexo</label>
         <select
           name="sexo"
@@ -48,13 +48,13 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
           value={formData.sexo}
           onChange={onChange}
         >
-          <option value="M">Masculino</option>
-          <option value="F">Feminino</option>
+          <option value="M">M</option>
+          <option value="F">F</option>
         </select>
       </div>
 
       <FormInput
-        className={styles["full-width"]}
+        col={6}
         label="E-mail"
         error={error.email}
         required={true}
@@ -64,7 +64,7 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
       />
       
       <FormInput
-        className={styles["full-width"]}
+        col={6}
         label="Família"
         error={error.familia}
         required={false}
@@ -74,7 +74,7 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
       />
 
       <FormInput
-        className={styles["full-width"]}
+        col={4}
         label="Local de Origem"
         error={error.localOrigem}
         required={false}
@@ -83,7 +83,7 @@ function FormDadosPessoais({ formData, onChange, error }: any) {
         value={formData.localOrigem}
       />
 
-      <div className={styles["form-group"]}>
+      <div className={styles["col-2"]}>
         <label className={styles["label"]}>Condição</label>
         <select
           name="condicao"

@@ -1,9 +1,10 @@
 import styles from '../Form.module.css';
 import ErrorMessage from '../../ErrorMessage/ErrorMessage';
 
-function FormInput({ label, error, className = "", required, ...props }: any) {
+function FormInput({ label, error, className = "", required, col=12,...props }: any) {
+    const gridClass = styles[`col-${col}`];
     return (
-        <div className={`${styles['form-group']} ${className}`}>
+        <div className={`${gridClass}`}>
             <label className={styles['label']}>
                 {label}
             </label>

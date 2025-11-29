@@ -1,13 +1,12 @@
-import styles from '../Form.module.css';
 import FormInput from '../FormInput/FormInput';
-
+import styles from '../Form.module.css';
 function FormEndereco({ formData, onChange, error }: any) {
     return (
         <>
-        <h3>Endereço</h3>
+      <h3 className={styles["section-title"]}>Endereço</h3>
         <FormInput 
-            className={styles["full-width"]}
-            label="logradouro"
+            col={8}
+            label="Logradouro"
             error={error.logradouro}
             required={true}
             name="logradouro"
@@ -15,8 +14,8 @@ function FormEndereco({ formData, onChange, error }: any) {
             value={formData.logradouro}
         />
         <FormInput 
-            className={styles["full-width"]}
-            label="bairro"
+            col={4}
+            label="Bairro"
             error={error.bairro}
             required={true}
             name="bairro"
@@ -25,8 +24,8 @@ function FormEndereco({ formData, onChange, error }: any) {
         />
 
         <FormInput 
-            className={styles["full-width"]}
-            label="cidade"
+            col={4}
+            label="Cidade"
             error={error.cidade}
             required={true}
             name="cidade"
@@ -35,7 +34,7 @@ function FormEndereco({ formData, onChange, error }: any) {
         />
 
         <FormInput 
-            className={styles["full-width"]}
+            col={2}
             label="UF"
             error={error.uf}
             required={true}
@@ -45,7 +44,7 @@ function FormEndereco({ formData, onChange, error }: any) {
         />
 
         <FormInput 
-            className={styles["full-width"]}
+            col={3}
             label="CEP"
             error={error.cep}
             required={true}
@@ -56,7 +55,7 @@ function FormEndereco({ formData, onChange, error }: any) {
         />
 
         <FormInput 
-            className={styles["full-width"]}
+            col={3}
             label="País"
             error={error.pais}
             required={true}

@@ -22,15 +22,12 @@
 
 .card:hover {
   transform: translateY(-4px);
-  /* Sombra aumenta um pouco, mas mantém definição */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   
-  /* Ao passar o mouse, a borda e o detalhe inferior mudam para a cor de destaque (Amarelo) */
   border-color: var(--color-amarelo, #F2CA50);
   border-bottom-color: var(--color-amarelo, #F2CA50);
 }
 
-/* O Link do React Router gera uma tag <a>. Precisamos resetar e expandir ela */
 .card > a {
   display: flex;
   flex-direction: column;
@@ -40,7 +37,6 @@
   color: inherit;
 }
 
-/* --- Cabeçalho (Título) --- */
 .titulo {
   width: 100%;
   flex: 0 0 auto; 
@@ -56,13 +52,11 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   
-  /* Divisor sutil entre título e corpo */
   border-bottom: 1px solid #f0f0f0;
   margin-bottom: 0.5rem;
-  background-color: #fafafa; /* Leve destaque no fundo do título */
+  background-color: #fafafa;
 }
 
-/* --- Corpo do Card (.props) --- */
 .props {
   flex: 1; 
   display: flex;
@@ -72,11 +66,9 @@
   color: #555;
   gap: 0.5rem;
   
-  /* Garante que o fundo seja branco para contraste com a borda */
   background-color: #fff;
 }
 
-/* Mobile Responsiveness */
 @media (max-width: 768px) {
   .card {
     width: 90%;

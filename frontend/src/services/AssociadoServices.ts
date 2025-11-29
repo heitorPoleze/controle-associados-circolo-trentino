@@ -42,7 +42,7 @@ export class AssociadoServices extends Services {
         }
     }
 
-    async getAssociadoDetalhado(id: string){
+    async getAssociadoDetalhado(id: string): Promise<AssociadoData> {
         try {
             const res = await fetch(`${this._apiAssociados}${id}`);
             if (!res.ok) throw new Error(`Erro ao consultar API: ${res.status}`);
