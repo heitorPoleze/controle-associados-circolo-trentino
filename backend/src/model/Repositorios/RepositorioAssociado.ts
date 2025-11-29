@@ -52,8 +52,9 @@ export class RepositorioAssociado extends Repositorio<Associado>{
         }
     }
 
+    //TODO: implementar o código do associado e dar ORDER BY nele
     async buscarTodos(): Promise<Associado[]> {
-        const sql = `SELECT * FROM ${this.tabela};`;
+        const sql = `SELECT * FROM ${this.tabela} ORDER BY dataAssociacao DESC;`;
         try {
             const [rows] = await this.conexao.query<AssociadoRow[]>(sql);
             

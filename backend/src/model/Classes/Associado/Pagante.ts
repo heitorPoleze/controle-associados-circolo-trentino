@@ -1,3 +1,4 @@
+/*
 import { Associado } from "./Associado";
 import { sexo } from "../../../controller/types/sexo";
 import { Endereco } from "../Endereco";
@@ -9,3 +10,4 @@ export class Pagante extends Associado{
         super(nome, dataNascimento, sexo, endereco, telefone, email, cpf, familia, localOrigem, condicao, uuid, dataAssociacao);
     }
 }
+*/

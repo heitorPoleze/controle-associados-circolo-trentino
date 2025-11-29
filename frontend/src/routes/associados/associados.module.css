@@ -1,0 +1,39 @@
+.link-cadastrar {
+  /* Aparência de Botão */
+  background-color: var(--color-green1, #627254);
+  color: var(--color-white, #f2f2f2);
+  
+  /* Espaçamento e Fonte */
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none; /* Remove o sublinhado padrão de links */
+  font-family: "Tektur", sans-serif;
+  
+  /* Comportamento */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  
+  /* Efeitos Visuais */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid transparent;
+}
+
+/* Hover: Sobe um pouco e ganha borda amarela */
+.link-cadastrar:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  background-color: #556349; /* Um tom levemente mais escuro */
+  border-color: var(--color-amarelo, #F2CA50);
+  color: #fff;
+}
+
+/* Active: Clique */
+.link-cadastrar:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

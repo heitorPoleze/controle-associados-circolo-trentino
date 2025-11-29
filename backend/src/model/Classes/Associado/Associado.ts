@@ -19,13 +19,13 @@ export class Associado {
         this._uuid = uuid ?? uuidv4();
         this._dataAssociacao = dataAssociacao;
         
-        if (familia.length < 0 || familia.length > 100) throw new Error("Familia inválida. A familia deve ter entre 1 e 100 caracteres."); 
-        if(localOrigem.length < 0 || localOrigem.length > 100) throw new Error("Local de origem inválido. O local de origem deve ter entre 1 e 100 caracteres.");
-        if(nome.length < 0 || nome.length > 100) throw new Error("Nome inválido. O nome deve ter entre 1 e 100 caracteres.");
+        if (familia.length < 0 || familia.length > 100) throw new Error("Familia inválida. A familia deve ter até 100 caracteres."); 
+        if(localOrigem.length < 0 || localOrigem.length > 100) throw new Error("Local de origem inválido. O local de origem deve ter até 100 caracteres.");
+        if(nome.length === 0 || nome.length > 100) throw new Error("Nome inválido. O nome deve ter entre 1 e 100 caracteres.");
         if(cpf.length !== 11) throw new Error("CPF inválido. O CPF deve ter 11 caracteres.");
         if(dataNascimento.length !== 10) throw new Error("Data de nascimento inválida. A data de nascimento deve ter 10 caracteres.");
         if(sexo.length !== 1) throw new Error("Sexo inválido. O sexo deve ser M ou F.");
-        if(email.length < 0 || email.length > 100) throw new Error("Email inválido. O email deve ter entre 1 e 100 caracteres.");
+        if(email.length === 0 || email.length > 100) throw new Error("Email inválido. O email deve ter entre 1 e 100 caracteres.");
         if(condicao !== "Ativo" && condicao !== "Inativo" && condicao !== "Cancelado") throw new Error("Condicao inválida. A condicao deve ser Ativo, Inativo ou Cancelado.");
 
         this._familia = familia;
