@@ -1,4 +1,3 @@
-
 .dataAssociacao {
   margin-top: auto; 
   font-size: 0.75rem;
@@ -7,8 +6,6 @@
   padding-top: 0.5rem;
   text-align: center;
 }
-
-
 
 .ativo {
    color: var(--color-green1, #627254);

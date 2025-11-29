@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './components/Header/Header';
 import Home from './routes/home';
 import Associados from './routes/associados/associados';
-import AssociadoDetalhado from './routes/associadoDetalhado';
+import AssociadoDetalhado from './routes/associadoDetalhado/associadoDetalhado';
 import { NotFound } from './routes/notFound/notFound';
 import CadastrarAssociado from './routes/cadastrarAssociado';
 

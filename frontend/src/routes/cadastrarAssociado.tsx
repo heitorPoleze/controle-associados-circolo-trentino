@@ -16,6 +16,7 @@ import {
 } from "../controllers/validarInputs";
 import type { TelefoneData } from "../services/TelefoneServices";
 import type { EnderecoData } from "../services/EnderecoServices";
+import styles from "../components/Form/Form.module.css"
 function CadastrarAssociado() {
   const [formData, setFormData] = useState<AssociadoData>({
     nome: "",
@@ -138,14 +139,16 @@ function CadastrarAssociado() {
   return (
     <>
       <h1>Cadastrar Associado</h1>
-      <FormDadosPessoais
+      <div className={styles['form-container']}>
+        <FormDadosPessoais
         formData={formData}
         onChange={handleChange}
         error={validationErrors}
       />
-      <FormTelefone formData={formData} onChange={handleTelefoneChange} error={validationErrors} />
-      <FormEndereco formData={formData} onChange={handleEnderecoChange} error={validationErrors} />
-      <button onClick={handleSubmit}>Salvar</button>
+      <FormTelefone formData={telefone} onChange={handleTelefoneChange} error={validationErrors} />
+      <FormEndereco formData={endereco} onChange={handleEnderecoChange} error={validationErrors} />
+      </div>
+      <button onClick={handleSubmit} className={styles['submit-button']}>Cadastrar</button>
       {apiError && <ErrorMessage message={apiError} />}
       {criado && <p>{criado}</p>}
     </>
