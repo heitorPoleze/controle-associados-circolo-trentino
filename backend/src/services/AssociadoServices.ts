@@ -24,9 +24,9 @@ interface AssociadoPayload {
     condicao: condicao;
     uuid?: string;
     dataAssociacao?: Date | undefined;
-    enderecos: EnderecoPayload[];
-    telefones: TelefonePayload[];
-    anotacoes: AnotacaoPayload[];
+    enderecos?: EnderecoPayload[];
+    telefones?: TelefonePayload[];
+    anotacoes?: AnotacaoPayload[];
 }
 
 export class AssociadoService {
@@ -161,7 +161,7 @@ export class AssociadoService {
             );
             await this._repAssociado.criar(associado, connection);
 
-            dados.enderecos.map(endereco => {
+            if(dados.enderecos) dados.enderecos.map(endereco => {
                 const enderecoObjeto = new Endereco(
                     endereco.logradouro,
                     endereco.bairro,
@@ -174,7 +174,7 @@ export class AssociadoService {
                 return this._repEndereco.criar(enderecoObjeto, connection);
             });
 
-            dados.telefones.map(telefone => {
+            if (dados.telefones) dados.telefones.map(telefone => {
                 const telefoneObjeto = new Telefone(
                     telefone.ddd,
                     telefone.numero,
@@ -276,9 +276,6 @@ export class AssociadoService {
                 cpf: associado.cpf,
                 condicao: associado.condicao,
                 dataAssociacao: associado.dataAssociacao,
-                enderecos: [],
-                telefones: [],
-                anotacoes: []
             }
         } catch (error) {
             if (error instanceof Error) {

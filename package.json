@@ -1,0 +1,23 @@
+{
+  "name": "controle-associados-circolo-trentino",
+  "version": "1.0.0",
+  "description": "O Circolo Trentino passa pela dificuldade de controle de atividades dos associados da instituição. O propósito da aplicação é facilitar o controle disso pelos funcionários.",
+  "main": "index.js",
+  "scripts": {
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"bgBlue.bold,bgMagenta.bold\" \"cd backend && npx nodemon\" \"cd frontend && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heitorPoleze/controle-associados-circolo-trentino.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/heitorPoleze/controle-associados-circolo-trentino/issues"
+  },
+  "homepage": "https://github.com/heitorPoleze/controle-associados-circolo-trentino#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

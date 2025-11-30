@@ -56,6 +56,22 @@ export class AssociadoServices extends Services {
         }
     }
 
+    async deleteAssociado(id: string): Promise<true> {
+        try{
+            const res = await fetch(`${this._apiAssociados}${id}`, {
+                method: 'DELETE'
+            })
+            if (!res.ok) throw new Error(`Erro ao consultar API: ${res.status}`);
+            return true
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
+
+        }
+    }
+
     async criarAssociado(payload: AssociadoData): Promise<AssociadoData> {
         try {
             const res = await fetch(this._apiAssociados, {

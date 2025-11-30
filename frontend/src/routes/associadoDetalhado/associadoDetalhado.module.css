@@ -15,9 +15,117 @@
     border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 1rem;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Barra de Ações (Botões) */
+.actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.5rem;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    min-width: 200px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown-item {
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    color: #555;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background-color 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #fff8f0; /* Fundo suave laranja */
+    color: var(--color-laranja2, #D94929);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+/* Estilo Base dos Botões de Ação */
+.btn-action {
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Botão Editar (Estilo Warning/Amarelo) */
+.btn-edit {
+    background-color: #fff;
+    color: var(--color-laranja1, #F2994B);
+    border-color: var(--color-laranja1, #F2994B);
+}
+
+.btn-edit:hover {
+    background-color: var(--color-laranja1, #F2994B);
+    color: #fff;
+}
+
+/* Botão Deletar (Estilo Danger/Vermelho) */
+.btn-delete {
+    background-color: #fff;
+    color: var(--color-red2, #ff4040);
+    border-color: var(--color-red2, #ff4040);
+}
+
+.btn-delete:hover {
+    background-color: var(--color-red2, #ff4040);
+    color: #fff;
 }
 
 .title-group h1 {
@@ -40,6 +148,7 @@
     text-transform: uppercase;
     font-size: 0.85rem;
     letter-spacing: 1px;
+    align-self: flex-start;
 }
 
 .ativo { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
