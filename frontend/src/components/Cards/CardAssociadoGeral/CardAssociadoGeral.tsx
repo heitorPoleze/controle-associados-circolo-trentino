@@ -2,7 +2,7 @@ import Card from "../Card/Card";
 import styles from "./CardAssociadoGeral.module.css";
 function CardAssociadoGeral(props: any) {
   return (
-    <Card id={props.id} titulo={props.titulo}>
+    <Card destino={props.destino} titulo={props.titulo}>
       {props.children}
       {props.dataAssociacao && (
         <div className={styles['dataAssociacao']}>Desde {props.dataAssociacao}</div>

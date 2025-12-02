@@ -65,7 +65,7 @@ function Associados() {
           {associados?.map((associado: AssociadoData) => (
             <CardAssociadoGeral
               key={associado.uuid}
-              id={associado.uuid}
+              destino={`/associados/${associado.uuid}`}
               titulo={associado.nome}
               dataAssociacao={associado.dataAssociacao?.split("T")[0]}
               condicao={associado.condicao}

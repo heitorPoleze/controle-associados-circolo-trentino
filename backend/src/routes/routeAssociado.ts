@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AssociadoService } from "../services/AssociadoServices";
+import { EnderecoService } from "../services/EnderecoServices";
 
 const router = Router();
 const associadoService = new AssociadoService();
@@ -62,5 +63,19 @@ router.delete("/associados/:id", async (req, res) => {
                 mensagem: error.message});
         }
     }
-})
+});
+
+router.get("/associados/:id/enderecos", async (req, res) => {
+    try{
+        const serviceEndereco = new EnderecoService();
+        const enderecos = await serviceEndereco.buscarTodosOsEnderecosDoAssociado(req.params.id);
+        res.status(200).json(enderecos);
+    } catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({ 
+                mensagem: error.message});
+        }
+    }
+});
+
 export default router;

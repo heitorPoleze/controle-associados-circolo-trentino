@@ -258,25 +258,25 @@ export class AssociadoService {
         }
     }
 
-    async updateAssociado(id: string, atributos: string[]): Promise<AssociadoPayload | null> {
+    async updateAssociado(id: string, payload: AssociadoPayload): Promise<AssociadoPayload> {
         try{
-            const associado = await this._repAssociado.update(id, atributos);
+            const updatedPayload = {
+                nome: payload.nome,
+                familia: payload.familia,
+                localOrigem: payload.localOrigem,
+                dataNascimento: payload.dataNascimento,
+                sexo: payload.sexo,
+                email: payload.email,
+                cpf: payload.cpf,
+                condicao: payload.condicao
+            }
+            const associado = await this._repAssociado.update(id, updatedPayload);
 
             if (!associado) {
-                return null;
+                throw new Error('Associado não encontrado.');
             }
-            return {
-                uuid: associado.uuid,
-                nome: associado.nome,
-                familia: associado.familia,
-                localOrigem: associado.localOrigem,
-                dataNascimento: associado.dataNascimento,
-                sexo: associado.sexo,
-                email: associado.email,
-                cpf: associado.cpf,
-                condicao: associado.condicao,
-                dataAssociacao: associado.dataAssociacao,
-            }
+            
+            return updatedPayload;
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(`Erro ao buscar a transação: ${error.message}`);

@@ -17,6 +17,7 @@ import {
 import type { TelefoneData } from "../services/TelefoneServices";
 import type { EnderecoData } from "../services/EnderecoServices";
 import styles from "../components/Form/Form.module.css"
+
 function CadastrarAssociado() {
   const [formData, setFormData] = useState<AssociadoData>({
     nome: "",

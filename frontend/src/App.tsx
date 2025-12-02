@@ -6,6 +6,9 @@ import Associados from './routes/associados/associados';
 import AssociadoDetalhado from './routes/associadoDetalhado/associadoDetalhado';
 import { NotFound } from './routes/notFound/notFound';
 import CadastrarAssociado from './routes/cadastrarAssociado';
+import EditarAssociado from './routes/editarAssociado';
+import EnderecosDoAssociado from './routes/enderecosDoAssociado';
+import EditarEndereco from './routes/editarEndereco';
 
 function App() {
 
@@ -19,6 +22,9 @@ function App() {
         <Route path='/associados' element={<Associados />} />
         <Route path='/associados/:id' element={<AssociadoDetalhado />} />
         <Route path='/cadastrarAssociado' element={<CadastrarAssociado />} />
+        <Route path='/editarAssociado/:id' element= {<EditarAssociado />} />
+        <Route path='/enderecosDoAssociado/:id' element={<EnderecosDoAssociado />} />
+        <Route path='/enderecos/:id' element = {<EditarEndereco />} />
         <Route path='*' element={<NotFound/>} />
       </Routes>
       </main>
