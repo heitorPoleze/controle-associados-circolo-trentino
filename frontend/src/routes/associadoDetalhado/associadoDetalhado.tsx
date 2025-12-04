@@ -63,7 +63,7 @@ function AssociadoDetalhado() {
   const toggleEditMenu = () => setShowEditMenu(!showEditMenu);
 
   const handleDelete = async () => {
-    if (!associado || !id) return;
+    if (!associado || !id) throw new Error("Associado não encontrado.");
 
     const confirmacao = window.confirm(
       `Você realmente deseja deletar o usuário ${associado.nome}?`
@@ -71,9 +71,8 @@ function AssociadoDetalhado() {
 
     if (confirmacao) {
       setLoading(true);
+      const assServices = new AssociadoServices();
       try {
-        const assServices = new AssociadoServices();
-        // Chama a função do serviço conforme solicitado
         await assServices.deleteAssociado(id);
 
         alert(`Associado ${associado.nome} deletado com sucesso.`);

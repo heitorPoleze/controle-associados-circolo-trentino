@@ -47,6 +47,26 @@ export class EnderecoServices extends Services{
         }
     }
 
+    async criarEndereco(payload: EnderecoData): Promise<EnderecoData> {
+        try{
+            const res = await fetch(this._apiEndereco, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) throw new Error(`Erro ao consultar API: ${res.status}`);
+            const dados = await res.json();
+            return dados;
+        }catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            }   
+            throw new Error('Ocorreu um erro desconhecido ao buscar os enderecos.');
+        }
+    }
+
     async editarEndereco(id: string, payload: EnderecoData): Promise<EnderecoData> {
         try{
             const res = await fetch(`${this._apiEndereco}${id}`, {
@@ -59,6 +79,22 @@ export class EnderecoServices extends Services{
             if (!res.ok) throw new Error(`Erro ao consultar API: ${res.status}`);
             const dados = await res.json();
             return dados;
+        }catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            }   
+            throw new Error('Ocorreu um erro desconhecido ao buscar os enderecos.');
+        }
+    }
+
+    async deleteEndereco(id: string): Promise<Response> { 
+        try{
+            const res = await fetch(`${this._apiEndereco}${id}`, {
+                method: 'DELETE'
+            });
+
+            if (!res.ok) throw new Error(`Erro ao consultar API: ${res.status}`);
+            return res;
         }catch (error) {
             if (error instanceof Error) {
                 throw new Error(error.message);
