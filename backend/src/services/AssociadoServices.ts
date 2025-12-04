@@ -34,11 +34,13 @@ export class AssociadoService {
     private _repEndereco: RepositorioEndereco;
     private _repTelefone: RepositorioTelefone;
     private _repAnotacao: RepositorioAnotacao;
+    private _conexao: Pool
     constructor() {
-        this._repAssociado = new RepositorioAssociado(conexao);
-        this._repEndereco = new RepositorioEndereco(conexao);
-        this._repTelefone = new RepositorioTelefone(conexao);
-        this._repAnotacao = new RepositorioAnotacao(conexao);
+        this._conexao = conexao;
+        this._repAssociado = new RepositorioAssociado(this._conexao);
+        this._repEndereco = new RepositorioEndereco(this._conexao);
+        this._repTelefone = new RepositorioTelefone(this._conexao);
+        this._repAnotacao = new RepositorioAnotacao(this._conexao);
     }
 
     payloadToAssociado = (row: RowDataPacket) => {
@@ -58,62 +60,8 @@ export class AssociadoService {
             anotacoes: []
         }
     }
-/*
-    async buscarDadosCompletosDosAssociados(): Promise<AssociadoPayload[]> {
-        const sql = `SELECT * FROM associados a
-                    LEFT JOIN enderecos e 
-                    ON a.uuidAssociado = e.uuidAssociado_FK
-                    LEFT JOIN telefones t
-                    ON a.uuidAssociado = t.uuidAssociado_FK
-                    LEFT JOIN anotacoes an
-                    ON a.uuidAssociado = an.uuidAssociado_FK;`;
 
-        const mapAssociados = new Map<string, AssociadoPayload>();
-        try {
-            const [rows] = await this._conexao.query<RowDataPacket[]>(sql);
-
-            for (const row of rows) {
-                if (!mapAssociados.has(row.uuidAssociado)) {
-
-                    mapAssociados.set(row.uuidAssociado, this.payloadToAssociado(row));
-                }
-
-                const associado = mapAssociados.get(row.uuidAssociado);
-                if (!associado) {
-                    throw new Error('Ocorreu um erro ao buscar os associados.');
-                }
-
-                if (row.uuidEndereco) {
-                    if (!associado.enderecos.some(endereco => endereco.uuid == row.uuidEndereco)) {
-                        const endereco = EnderecoService.payloadToEndereco(row);
-                        associado.enderecos.push(endereco);
-                    }
-                }
-                if (row.uuidTelefone) {
-                    if (!associado.telefones.some(telefone => telefone.uuid == row.uuidTelefone)) {
-                        const telefone = TelefoneServices.payloadToTelefone(row);
-                        associado.telefones.push(telefone)
-                    }
-                }
-
-                if (row.uuidAnotacao) {
-                    if (!associado.anotacoes.some(anotacao => anotacao.uuid == row.uuidAnotacao)) {
-                        const anotacao = AnotacaoService.payloadToAnotacao(row);
-                        associado.anotacoes.push(anotacao);
-                    }
-                }
-            }
-            return Array.from(mapAssociados.values());
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(`Erro ao buscar associados: ${error.message}`);
-            }
-            throw new Error('Ocorreu um erro desconhecido ao buscar os associados.');
-        }
-    }
-*/
     async buscarTodos(): Promise<AssociadoPayload[]> {
-        
         try{
             const vetAssociados = await this._repAssociado.buscarTodos();
 
@@ -145,7 +93,7 @@ export class AssociadoService {
     }
 
     async criarAssociadoCompleto(dados: AssociadoPayload): Promise<Associado> {
-        const connection = await conexao.getConnection();
+        const connection = await this._conexao.getConnection();
         try {
             await connection.beginTransaction();
 

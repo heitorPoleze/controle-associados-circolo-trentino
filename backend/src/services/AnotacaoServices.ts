@@ -17,8 +17,8 @@ export class AnotacaoService {
     private _conexao: Pool;
     constructor() {
         this._conexao = conexao;
-        this._repAnotacao = new RepositorioAnotacao(conexao);
-        this._repAssociado = new RepositorioAssociado(conexao);
+        this._repAnotacao = new RepositorioAnotacao(this._conexao);
+        this._repAssociado = new RepositorioAssociado(this._conexao);
     }
 
     public static payloadToAnotacao (row: RowDataPacket) {
@@ -60,6 +60,73 @@ export class AnotacaoService {
             throw new Error('Ocorreu um erro desconhecido ao criar a anotacao.');
         }finally{
             connection.release();
+        }
+    }
+
+    async buscarTodasAsAnotacoesDoAssociado(uuidAssociado: string): Promise<AnotacaoPayload[]> {
+        const anotacoes = await this._repAnotacao.buscarPorIdAssociado(uuidAssociado);
+        if (!anotacoes) {
+            throw new Error('Anotação não encontrada.');
+        }
+        const payload = anotacoes.map(anotacao => {
+            return {
+                descricao: anotacao.descricao,
+                dataAnotacao: anotacao.dataAnotacao,
+                uuidAnotacao: anotacao.uuid
+            }
+        });
+        return payload;
+    }
+
+    async getAnotacao(id: string): Promise<AnotacaoPayload> {
+        try{
+            const anotacao = await this._repAnotacao.buscarTodosOsAtributosPorId(id);
+
+            if (!anotacao) {
+                throw new Error('Anotação não encontrada.');
+            }
+            
+            const payload = {
+                descricao: anotacao.descricao,
+                dataAnotacao: anotacao.dataAnotacao
+            }
+
+            return payload;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar a transação: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar a transação.');
+        }
+    }
+
+    async updateAnotacao(id: string, payload: AnotacaoPayload): Promise<AnotacaoPayload> {
+        const updatedPayload = {
+            descricao: payload.descricao,
+            dataAnotacao: payload.dataAnotacao,
+        }
+        try{
+            const anotacao = await this._repAnotacao.update(id, updatedPayload);
+            if (!anotacao) {
+                throw new Error('Anotação não encontrada.');
+            }
+            return anotacao;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar a transação: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar a transação.');
+        }
+    }
+
+    async deleteAnotacao(id: string): Promise<void> {
+        try{
+            return await this._repAnotacao.delete(id);
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar a transação: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar a transação.');
         }
     }
 } 
