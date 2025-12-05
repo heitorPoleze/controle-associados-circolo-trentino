@@ -72,7 +72,7 @@ export class AnotacaoService {
             return {
                 descricao: anotacao.descricao,
                 dataAnotacao: anotacao.dataAnotacao,
-                uuidAnotacao: anotacao.uuid
+                uuid: anotacao.uuid
             }
         });
         return payload;
@@ -88,7 +88,7 @@ export class AnotacaoService {
             
             const payload = {
                 descricao: anotacao.descricao,
-                dataAnotacao: anotacao.dataAnotacao
+                dataAnotacao: anotacao.dataAnotacao,
             }
 
             return payload;

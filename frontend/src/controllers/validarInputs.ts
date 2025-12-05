@@ -46,6 +46,12 @@ export function validarTelefone(formData: TelefoneData) {
   return errors;
 }
 
+export function validarAnotacao(descricao: string): true | string {
+    if (descricao.length === 0 || descricao.length > 250) {
+        return "A anotação deve ter entre 1 e 250 caracteres.";
+    }
+    return true;
+}
 export function validarEndereco(data: EnderecoData) {
     const errors: any = {};
 

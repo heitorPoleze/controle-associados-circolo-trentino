@@ -5,7 +5,7 @@ import {
 } from "../services/AssociadoServices";
 import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
 import FormDadosPessoais from "../components/Form/FormDadosPessoais/FormDadosPessoais";
-import FormTelefone from "../components/Form/FormTelefone/FormTelefone";
+import FormTelefone from '../components/Form/FormTelefone/FormTelefone'
 import FormEndereco from "../components/Form/FormEndereco/FormEndereco";
 import {
   regexManterApenasNumeros,

@@ -1,44 +1,40 @@
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  EnderecoServices,
-  type EnderecoData,
-} from "../services/EnderecoServices";
+  TelefoneServices,
+  type TelefoneData,
+} from "../services/TelefoneServices";
 import { useEffect, useState } from "react";
 import {
-  validarEndereco,
+  validarTelefone,
   type ValidationErrors,
 } from "../controllers/validarInputs";
 import Loading from "../components/Loading/Loading";
-import FormEndereco from "../components/Form/FormEndereco/FormEndereco";
-import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
 import styles from "../components/Form/Form.module.css";
-function EditarEndereco() {
-  const { id } = useParams();
-  const [formData, setFormData] = useState<EnderecoData>({
-    logradouro: "",
-    bairro: "",
-    cidade: "",
-    uf: "",
-    cep: "",
-    pais: "Brasil",
-  });
+import FormTelefone from "../components/Form/FormTelefone/FormTelefone";
 
-  const [loading, setLoading] = useState(true);
+function EditarTelefone() {
+  const { id } = useParams();
+  const [formData, setFormData] = useState<TelefoneData>({
+    ddd: "",
+    numero: "",
+  });
   const [erro, setErro] = useState<string | null>(null);
-  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>(
+    {}
+  );
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function carregarDados() {
       try {
         if (id) {
-          const serviceEndereco = new EnderecoServices();
-          const endereco = await serviceEndereco.getEndereco(id);
-          setFormData(endereco);
+          const serviceTelefone = new TelefoneServices();
+          const telefone = await serviceTelefone.getTelefone(id);
+          setFormData(telefone);
 
-          if (!endereco) {
-            setLoading(false);
-            setErro("Erro ao buscar endereço");
+          if (!telefone) {
+            setErro("Telefone não encontrado.");
           }
         }
       } catch (error) {
@@ -65,7 +61,7 @@ function EditarEndereco() {
   };
 
   const validar = (): boolean => {
-    const erros = validarEndereco(formData);
+    const erros = validarTelefone(formData);
     setValidationErrors(erros);
     return Object.keys(erros).length === 0;
   };
@@ -74,11 +70,12 @@ function EditarEndereco() {
     e.preventDefault();
     setErro(null);
     if (validar()) {
-      const enderecoServices = new EnderecoServices();
+      const telefoneServices = new TelefoneServices();
+      setLoading(true);
       try {
         if (id) {
-          await enderecoServices.editarEndereco(id, formData);
-          alert(`Endereço editado com sucesso!`);
+          await telefoneServices.editarTelefone(id, formData);
+          alert(`Telefone editado com sucesso!`);
           navigate(`/associados/`);
         }
       } catch (error) {
@@ -87,21 +84,23 @@ function EditarEndereco() {
         } else {
           setErro("Erro desconhecido");
         }
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleDelete = async () => {
-    if(!id) throw new Error("Endereço nao encontrado.");
+    if (!id) throw new Error("Endereço nao encontrado.");
     const confirmacao = window.confirm(
-      `Tem certeza que deseja excluir o endereço ${formData.logradouro}?`
+      `Tem certeza que deseja excluir o telefone (${formData.ddd})${formData.numero}?`
     );
 
     if (confirmacao) {
       setLoading(true);
-      const enderecoServices = new EnderecoServices();
+      const telefoneServices = new TelefoneServices();
       try {
-        await enderecoServices.deleteEndereco(id);
+        await telefoneServices.deletarTelefone(id);
         alert(`Endereço excluido com sucesso!`);
         navigate(`/associados/`);
       } catch (error) {
@@ -123,22 +122,15 @@ function EditarEndereco() {
   return (
     <>
       <button onClick={handleDelete} className={styles["submit-button"]}>
-        EXCLUIR ENDEREÇO
+        EXCLUIR TELEFONE
       </button>
       <div className={styles["form-container"]}>
-        <FormEndereco
-          formData={formData}
-          onChange={handleChange}
-          error={validationErrors}
-        />
+        <FormTelefone formData={formData} onChange={handleChange} error={validationErrors} />
+        <button onClick={handleSubmit} className={styles['submit-button']}>Editar</button>
+        {erro && <p className={styles['error-message']}>{erro}</p>}
       </div>
-      <button onClick={handleSubmit} className={styles["submit-button"]}>
-        Editar
-      </button>
-      {erro && <ErrorMessage message={erro} />}
-
     </>
   );
 }
 
-export default EditarEndereco;
+export default EditarTelefone;

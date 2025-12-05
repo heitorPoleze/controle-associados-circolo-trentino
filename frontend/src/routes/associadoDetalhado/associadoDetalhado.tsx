@@ -124,7 +124,7 @@ function AssociadoDetalhado() {
                     Dados Pessoais
                   </Link>
                   <Link
-                    to={`/editarTelefone/${associado.uuid}`}
+                    to={`/telefonesDoAssociado/${associado.uuid}`}
                     className={styles["dropdown-item"]}
                   >
                     Telefones
@@ -134,6 +134,12 @@ function AssociadoDetalhado() {
                     className={styles["dropdown-item"]}
                   >
                     Endereços
+                  </Link>
+                  <Link
+                    to={`/anotacoesDoAssociado/${associado.uuid}`}
+                    className={styles["dropdown-item"]}
+                  >
+                    Anotações
                   </Link>
                 </div>
               )}
@@ -318,10 +324,13 @@ function AssociadoDetalhado() {
                       </div>
                     ))
                   ) : (
-                    <div className={styles["empty-state"]}>
-                      Nenhuma anotação registrada.
-                    </div>
+                    <Link to={`/associado/${id}/anotacoes`} className={styles["empty-state"]}>
+                      Criar Anotação
+                    </Link>
                   )}
+                    <Link to={`/associado/${id}/anotacoes`} className={styles["empty-state"]}>
+                      Criar Anotação
+                    </Link>
                 </div>
               )}
             </div>
