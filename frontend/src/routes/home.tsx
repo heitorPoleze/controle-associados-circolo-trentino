@@ -3,27 +3,7 @@
 function Home(){
     return (
         <>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
-        <h2>2</h2>
+        <h1>fala ai turminha de tsi  muito rock na veia ne não 🤟 </h1>
         </>
     )
 }

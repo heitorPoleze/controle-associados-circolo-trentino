@@ -1,7 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styles from "./Header.module.css";
+import stylesForm from "../Form/Form.module.css";
 import logo from "../../../assets/logo.png";
+import { useAuth } from "../../controllers/AuthContext";
 function Header() {
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+  const handleLogout = () => {
+    signOut();
+    navigate("/");
+  };
   return (
     <header className={styles['header']}>
       <div className={styles['header-container']}>
@@ -10,7 +18,7 @@ function Header() {
         </div>
         <nav className={styles['header-nav']}>
           <NavLink
-            to="/"
+            to="/home"
             className={({ isActive }) =>
               isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
             }
@@ -25,14 +33,6 @@ function Header() {
             }
           >
             Associado
-          </NavLink>
-          <NavLink
-            to="/anotacoes"
-            className={({ isActive }) =>
-              isActive ? `${styles["nav-link"]} ${styles["active"]}` : styles["nav-link"]
-            }
-          >
-            Anotações
           </NavLink>
           <NavLink
             to="/grupos-artisticos"
@@ -50,6 +50,7 @@ function Header() {
           >
             Pagamentos
           </NavLink>
+           <button onClick={handleLogout} className={stylesForm["submit-button"]}> Sair </button>
         </nav>
       </div>
     </header>

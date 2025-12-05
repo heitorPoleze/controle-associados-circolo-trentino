@@ -151,7 +151,7 @@
     transition: transform 0.1s, box-shadow 0.2s, background-color 0.2s;
     font-size: 1rem;
 
-    width: 50vw;      
+    width: 20vw;      
     max-width: 100%;         
     white-space: nowrap;     
     overflow: hidden;        
