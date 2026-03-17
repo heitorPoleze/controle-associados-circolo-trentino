@@ -1,3 +1,4 @@
+import { memo } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Header from "./components/Header/Header";
@@ -20,11 +21,11 @@ import { AuthProvider, useAuth } from "./controllers/AuthContext";
 import { Login } from "./routes/login";
 import Loading from "./components/Loading/Loading";
 
-  const RotaPrivada = () => {
+  const RotaPrivada = memo(() => {
     const { signed, loading } = useAuth();
     if (loading) return <Loading message="Carregando..." />;
     return signed ? <Outlet /> : <Navigate to="/" />;;
-  };
+  });
 
 function App() {
   return (

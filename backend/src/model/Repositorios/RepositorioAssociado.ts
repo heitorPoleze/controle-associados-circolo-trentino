@@ -67,5 +67,34 @@ export class RepositorioAssociado extends Repositorio<Associado>{
         }
     }
 
+    async buscarAssociadoCompletoPorId(uuid: string): Promise<any> {
+        const sql = `
+        SELECT
+            a.uuidAssociado, a.nome, a.familia, a.localOrigem, a.dataNascimento, a.sexo, a.email, a.cpf, a.condicao, a.dataAssociacao,
+            e.uuidEndereco, e.logradouro, e.bairro, e.cidade, e.uf, e.cep, e.pais,
+            t.uuidTelefone, t.ddd, t.numero,
+            an.uuidAnotacao, an.descricao, an.dataAnotacao
+        FROM
+            associados a
+        LEFT JOIN
+            enderecos e ON a.uuidAssociado = e.uuidAssociado_FK
+        LEFT JOIN
+            telefones t ON a.uuidAssociado = t.uuidAssociado_FK
+        LEFT JOIN
+            anotacoes an ON a.uuidAssociado = an.uuidAssociado_FK
+        WHERE
+            a.uuidAssociado = ?;
+        `;
+        try {
+            const [rows] = await this.conexao.query<RowDataPacket[]>(sql, [uuid]);
+            return rows;
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Erro ao buscar associado completo: ${error.message}`);
+            }
+            throw new Error('Ocorreu um erro desconhecido ao buscar associado completo.');
+        }
+    }
+
 
 }

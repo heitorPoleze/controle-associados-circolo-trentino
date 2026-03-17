@@ -3,13 +3,14 @@ import styles from "./Header.module.css";
 import stylesForm from "../Form/Form.module.css";
 import logo from "../../../assets/logo.png";
 import { useAuth } from "../../controllers/AuthContext";
-function Header() {
+import { memo, useCallback } from "react";
+const Header = memo(() => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     signOut();
     navigate("/");
-  };
+  }, [navigate, signOut]);
   return (
     <header className={styles['header']}>
       <div className={styles['header-container']}>
@@ -55,6 +56,6 @@ function Header() {
       </div>
     </header>
   );
-}
+})
 
 export default Header;

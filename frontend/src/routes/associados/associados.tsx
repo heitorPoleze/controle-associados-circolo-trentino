@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   AssociadoServices,
   type AssociadoData,
@@ -9,45 +9,41 @@ import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import { Link } from "react-router-dom";
 import styles from "./associados.module.css";
 
+const assServices = new AssociadoServices();
+
 function Associados() {
   const [associados, setAssociados] = useState<AssociadoData[]>([]);
   const [erro, setErro] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function buscarAssociados(): Promise<void> {
-      setLoading(true);
-      const assServices = new AssociadoServices();
-      try {
-        const associados = await assServices.getAssociados();
-        setAssociados(associados);
-      } catch (error) {
-        if (error instanceof Error) {
-          setErro(error.message);
-        } else {
-          setErro("Erro desconhecido");
-        }
-      } finally {
-        setLoading(false);
+  const buscarAssociados = useCallback(async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const associados = await assServices.getAssociados();
+      setAssociados(associados);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErro(error.message);
+      } else {
+        setErro("Erro desconhecido");
       }
+    } finally {
+      setLoading(false);
     }
-
-    buscarAssociados();
   }, []);
+
+  useEffect(() => {
+    buscarAssociados();
+  }, [buscarAssociados]);
 
   if (loading) {
     return <Loading message="Buscando associados..." />;
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div className={styles["associados-container"]}>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "2rem",
-        }}
+       className={styles["header-container"]}
       >
         <h1>Associados</h1>
         <Link
@@ -61,7 +57,7 @@ function Associados() {
       {erro? (
         <ErrorMessage message={erro} />
       ) : (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
+        <div className={styles["cards-container"]}>
           {associados?.map((associado: AssociadoData) => (
             <CardAssociadoGeral
               key={associado.uuid}

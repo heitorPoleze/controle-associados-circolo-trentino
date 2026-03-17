@@ -29,6 +29,32 @@ interface AssociadoPayload {
     anotacoes?: AnotacaoPayload[];
 }
 
+interface AssociadoCompletoRow extends RowDataPacket {
+    uuidAssociado: string;
+    nome: string;
+    familia: string;
+    localOrigem: string;
+    dataNascimento: string;
+    sexo: sexo;
+    email: string;
+    cpf: string;
+    condicao: condicao;
+    dataAssociacao: Date;
+    uuidEndereco: string;
+    logradouro: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+    cep: string;
+    pais: string;
+    uuidTelefone: string;
+    ddd: string;
+    numero: string;
+    uuidAnotacao: string;
+    descricao: string;
+    dataAnotacao: Date;
+}
+
 export class AssociadoService {
     private _repAssociado: RepositorioAssociado;
     private _repEndereco: RepositorioEndereco;
@@ -43,7 +69,7 @@ export class AssociadoService {
         this._repAnotacao = new RepositorioAnotacao(this._conexao);
     }
 
-    payloadToAssociado = (row: RowDataPacket) => {
+    payloadToAssociado = (row: AssociadoCompletoRow): AssociadoPayload => {
         return {
             nome: row.nome ?? "",
             familia: row.familia ?? "",
@@ -109,31 +135,36 @@ export class AssociadoService {
             );
             await this._repAssociado.criar(associado, connection);
 
-            if(dados.enderecos) dados.enderecos.map(endereco => {
-                const enderecoObjeto = new Endereco(
-                    endereco.logradouro,
-                    endereco.bairro,
-                    endereco.cidade,
-                    endereco.uf,
-                    endereco.cep,
-                    endereco.pais,
-                    associado
-                );
-                return this._repEndereco.criar(enderecoObjeto, connection);
-            });
+            if (dados.enderecos) {
+                for (const endereco of dados.enderecos) {
+                    const enderecoObjeto = new Endereco(
+                        endereco.logradouro,
+                        endereco.bairro,
+                        endereco.cidade,
+                        endereco.uf,
+                        endereco.cep,
+                        endereco.pais,
+                        associado
+                    );
+                    await this._repEndereco.criar(enderecoObjeto, connection);
+                }
+            }
 
-            if (dados.telefones) dados.telefones.map(telefone => {
-                const telefoneObjeto = new Telefone(
-                    telefone.ddd,
-                    telefone.numero,
-                    associado
-                );
-                return this._repTelefone.criar(telefoneObjeto, connection);
-            })
+            if (dados.telefones) {
+                for (const telefone of dados.telefones) {
+                    const telefoneObjeto = new Telefone(
+                        telefone.ddd,
+                        telefone.numero,
+                        associado
+                    );
+                    await this._repTelefone.criar(telefoneObjeto, connection);
+                }
+            }
+            
             await connection.commit();
             return associado;
         } catch (error) {
-            connection.rollback();
+            await connection.rollback();
             if (error instanceof Error) {
                 throw new Error(`Erro ao criar a transação: ${error.message}`);
             }
@@ -144,60 +175,52 @@ export class AssociadoService {
     }
 
     async buscarAssociadoCompletoPorId(uuidAssociado: string): Promise<AssociadoPayload | null> {
-
         try {
-            const associado = await this._repAssociado.buscarTodosOsAtributosPorId(uuidAssociado);
-            if (!associado) {
+            const rows = await this._repAssociado.buscarAssociadoCompletoPorId(uuidAssociado);
+
+            if (!rows || rows.length === 0) {
                 return null;
             }
 
-            const enderecos = await this._repEndereco.buscarPorIdAssociado(uuidAssociado);
-            const enderecosEmPayload = enderecos ? enderecos.map(endereco => {
-                return {
-                    logradouro: endereco.logradouro,
-                    bairro: endereco.bairro,
-                    cidade: endereco.cidade,
-                    uf: endereco.uf,
-                    cep: endereco.cep,
-                    pais: endereco.pais,
-                    uuid: endereco.uuid
-                }
-            }) : null;
+            const associado = this.payloadToAssociado(rows[0]);
 
-            const telefones = await this._repTelefone.buscarPorIdAssociado(uuidAssociado);
-            const telefonesEmPayload = telefones ? telefones.map(telefone => {
-                return {
-                    ddd: telefone.ddd,
-                    numero: telefone.numero,
-                    uuid: telefone.uuid
-                }
-            }) : null;
+            const enderecos = new Map<string, EnderecoPayload>();
+            const telefones = new Map<string, TelefonePayload>();
+            const anotacoes = new Map<string, AnotacaoPayload>();
 
-            const anotacoes = await this._repAnotacao.buscarPorIdAssociado(uuidAssociado);
-            const anotacoesEmPayload = anotacoes ? anotacoes.map(anotacao => {
-                return {
-                    descricao: anotacao.descricao,
-                    dataAnotacao: anotacao.dataAnotacao,
-                    uuid: anotacao.uuid
+            rows.forEach((row: AssociadoCompletoRow) => {
+                if (row.uuidEndereco && !enderecos.has(row.uuidEndereco)) {
+                    enderecos.set(row.uuidEndereco, {
+                        logradouro: row.logradouro,
+                        bairro: row.bairro,
+                        cidade: row.cidade,
+                        uf: row.uf,
+                        cep: row.cep,
+                        pais: row.pais,
+                        uuid: row.uuidEndereco
+                    });
                 }
-            }) : null;
+                if (row.uuidTelefone && !telefones.has(row.uuidTelefone)) {
+                    telefones.set(row.uuidTelefone, {
+                        ddd: row.ddd,
+                        numero: row.numero,
+                        uuid: row.uuidTelefone
+                    });
+                }
+                if (row.uuidAnotacao && !anotacoes.has(row.uuidAnotacao)) {
+                    anotacoes.set(row.uuidAnotacao, {
+                        descricao: row.descricao,
+                        dataAnotacao: row.dataAnotacao,
+                        uuid: row.uuidAnotacao
+                    });
+                }
+            });
 
-            const payload: AssociadoPayload = {
-                nome: associado.nome,
-                familia: associado.familia,
-                localOrigem: associado.localOrigem,
-                dataNascimento: associado.dataNascimento,
-                sexo: associado.sexo,
-                email: associado.email,
-                cpf: associado.cpf,
-                condicao: associado.condicao,
-                uuid: associado.uuid,
-                dataAssociacao: associado.dataAssociacao,
-                enderecos: enderecosEmPayload || [],
-                telefones: telefonesEmPayload || [],
-                anotacoes: anotacoesEmPayload || []
-            }
-            return payload;
+            associado.enderecos = [...enderecos.values()];
+            associado.telefones = [...telefones.values()];
+            associado.anotacoes = [...anotacoes.values()];
+
+            return associado;
         } catch (error) {
             if (error instanceof Error) {
                 throw new Error(`Erro ao buscar a transação: ${error.message}`);
